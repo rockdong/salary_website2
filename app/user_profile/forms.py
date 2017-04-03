@@ -9,3 +9,9 @@ from .models import UserProfile
 class LoginForm(forms.Form):
     username = forms.CharField(required=True)
     password = forms.CharField(required=True)
+
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(required=True)
+    password = forms.CharField(required=True)
+    name = forms.CharField(required=True)
