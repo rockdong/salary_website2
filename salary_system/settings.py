@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'xlrd',
     'xadmin',
     'crispy_forms',
     'user_profile',
+    'salary',
     'options',
 ]
 

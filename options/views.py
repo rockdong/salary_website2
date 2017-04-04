@@ -1,7 +1,10 @@
 # _*_ coding:utf-8 _*_
 
+import os
+
 from django.shortcuts import render
 from django.core.serializers import serialize
+import xlrd
 
 # Create your views here.
 
@@ -15,6 +18,7 @@ from django.views.generic import View
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from user_profile.models import UserProfile
+from salary.models import Salary
 
 from user_profile.forms import LoginForm, RegisterForm
 
@@ -127,3 +131,104 @@ class AddUserView(View):
                 return render(request, 'add_staffs.html', {"register_form": register_form})
         except Exception as e:
             return HttpResponse(json.dumps({"status": "fail", "msg": "执行错误!"}), content_type="application/json")
+
+
+'''
+人员查看
+'''
+class UserListView(View):
+    def get(self, request):
+        user_list = UserProfile.objects.all()
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        p = Paginator(user_list, 5, request=request)
+        users = p.page(page)
+        return render(request, 'staffs.html', {"users": users})
+
+
+'''
+人员删除
+'''
+class UserDeleteView(View):
+    def post(self, request, id):
+        try:
+            user = UserProfile.objects.get(id=id)
+            user.delete()
+            return HttpResponse(json.dumps({"status": "success", "msg": "用户删除成功!"}), content_type="application/json")
+        except Exception as e:
+            return HttpResponse(json.dumps({"status": "fail", "msg": "用户删除失败!"}), content_type="application/json")
+
+
+'''
+添加数据
+'''
+class DataAddView(View):
+    def get(self, request):
+        return render(request, 'add_data.html', {})
+
+    def post(self, request):
+        try:
+            file = request.FILES.get('file', '')
+
+            # 文件名判断
+            filename = file.name
+            pathname = filename.split('.')[-1]
+
+            if pathname != u"xls" and pathname != u"xlsx" :
+                return HttpResponse(json.dumps({"status": "fail", "msg": "文件不是 Excel 文件!"}), content_type="application/json")
+
+
+            baseDir = os.path.dirname(os.path.abspath(__name__))
+            jpgdir = os.path.join(baseDir, 'static')
+
+            filename = os.path.join(jpgdir, file.name)
+            fobj = open(filename, 'wb')
+            for chrunk in file.chunks():
+                fobj.write(chrunk)
+            fobj.close()
+
+
+
+            excelFile = xlrd.open_workbook(filename)
+
+            table = excelFile.sheets()[0]
+
+            print table.nrows
+            print table.ncols
+
+            for i in range(2, table.nrows):
+                print table.cell_value(i, 0)
+                print xlrd.xldate.xldate_as_datetime(table.cell_value(i, 1), 1)
+                print table.cell_value(i, 2)
+
+                salary = Salary()
+                user = UserProfile.objects.get(username=table.cell_value(i, 0))
+                salary.user = user
+                salary.date = xlrd.xldate.xldate_as_datetime(table.cell_value(i, 1), 1)
+                salary.salary = table.cell_value(i, 2)
+                salary.save()
+
+            # 删除文件
+            os.remove(filename)
+
+            return HttpResponse(json.dumps({"status": "success", "msg": "数据添加成功!"}), content_type="application/json")
+        except Exception as e:
+            return HttpResponse(json.dumps({"status": "fail", "msg": "操作错误!"}), content_type="application/json")
+
+
+'''
+查看薪水
+'''
+class SalaryView(View):
+    def get(self, request, name):
+        all_salary = Salary.objects.filter(user__name=name)
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        p = Paginator(all_salary, 5, request=request)
+        salarys = p.page(page)
+        return render(request, 'salary.html', {"salarys": salarys})
+

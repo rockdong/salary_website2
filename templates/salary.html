@@ -1,0 +1,123 @@
+
+{% extends 'index.html' %}
+<!-- content -->
+
+{% block content %}
+
+    <div class="app-content-body">
+        <div>
+            <div class="col2 bg-light lter b-b wrapper-md">
+                <h1 class="m-n font-thin h3">工资查看</h1>
+            </div>
+        </div>
+        <div class="wrapper-md">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <table class="table table-hover" data-toggle="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center" style="width:20%">姓名</th>
+                                    <th class="text-center" style="width:60%">时间</th>
+                                    <th class="text-center" style="width:20%">薪水</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for salary in salarys.object_list %}
+                                    <tr>
+                                        <td class="text-center">{{ salary.user.name }}</td>
+                                        <td class="text-center">{{ salary.date | date:'Y-m-d' }}</td>
+                                        <td class="text-center">{{ salary.salary }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <!-- 分页 -->
+                            <nav>
+                                <ul class="pagination pagination-sm">
+                                    {% if salarys.has_previous %}
+                                        <li>
+                                            <a>
+                                                <span>上一页</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="hidden">
+                                            <a>
+                                                <span>上一页</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for page in salarys.pages %}
+                                        {% if page %}
+                                            {% ifequal page users.number %}
+                                                <li class="active">
+                                                    <a href="#">{{ page }}</a>
+                                                </li>
+                                            {% else %}
+                                                <li>
+                                                    <a href="#">{{ page }}</a>
+                                                </li>
+                                            {% endifequal %}
+
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if salarys.has_next %}
+                                        <li>
+                                            <a>
+                                                <span>下一页</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="hidden">
+                                            <a>
+                                                <span>下一页</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                </ul>
+                            </nav>
+                            <!-- / 分页 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(".btn-danger").click(function () {
+            var id = this.getAttribute("id");
+            $.ajax({
+                url: "/index/user_delete/"+id+"/",
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                type: "POST",
+                success: function (result) {
+                    if("success" == result.status) {
+                        swal({
+                                    title: "执行成功",
+                                    text: result.msg,
+                                    type: "success",
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                },
+                                function () {
+                                    location.href = '{% url 'user_list' %}';
+                                });
+                    }else{
+                        sweetAlert("失败!", result.msg, "error");
+                    }
+                },
+                error: function (result) {
+                    sweetAlert("错误!", result.msg, "error");
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>
-        春暖花管理平台
+        管理平台
     </title>
 
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css" />
@@ -44,7 +44,7 @@
             <a name="index" href="#" class="navbar-brand text-lt">
                 {#                <i class="fa fa-btc"></i>#}
                 {#                <img src="{% static 'img/logo.png' %}" alt="." class="hide">#}
-                <span class="hidden-folded m-l-xs">春暖花装饰公司</span>
+                <span class="hidden-folded m-l-xs">工资查询系统</span>
             </a>
             <!-- / brand -->
         </div>
@@ -157,13 +157,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a name="all_staffs" href="#">
+                                    <a name="all_staffs" href="/index/salary/{{ request.user.name }}/">
                                         <span>查看个人工资</span>
                                     </a>
                                 </li>
                                 {% if request.user.is_superuser %}
                                     <li>
-                                        <a name="all_staffs" href="#">
+                                        <a name="all_staffs" href="{% url 'user_list' %}">
                                             <span>查看人员信息</span>
                                         </a>
                                     </li>
@@ -187,12 +187,12 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a name="add_staffs" href="{% url 'add_user' %}">
+                                        <a name="user_add" href="{% url 'add_user' %}">
                                             <span>添加人员</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a name="add_departments" href="#">
+                                        <a name="data_add" href="{% url 'data_add' %}">
                                             <span>添加数据</span>
                                         </a>
                                     </li>
