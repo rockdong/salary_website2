@@ -5,7 +5,7 @@ __date__ = '2017/3/19 21:12'
 
 from django.conf.urls import url
 
-from options.views import IndexView, AddUserView, UserListView, UserDeleteView, DataAddView, SalaryView
+from options.views import IndexView, AddUserView, UserListView, UserDeleteView, DataAddView, SalaryView, SetPasswordView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='index'),
@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^user_delete/(?P<id>.*)/', UserDeleteView.as_view(), name='user_delete'),
     url(r'^data_add/', DataAddView.as_view(), name='data_add'),
     url(r'^salary/(?P<name>.*)/', SalaryView.as_view(), name='salary'),
+    url(r'^set_password/', SetPasswordView.as_view(), name='set_password'),
 ]

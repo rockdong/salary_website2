@@ -25,9 +25,9 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'app'))
 SECRET_KEY = 'oiov_!b^p5x%@ppd-*7jiwxq_sdjpd8v!9h-qbmb48(tlt*lp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -133,3 +133,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

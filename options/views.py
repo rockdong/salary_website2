@@ -232,3 +232,19 @@ class SalaryView(View):
         salarys = p.page(page)
         return render(request, 'salary.html', {"salarys": salarys})
 
+
+'''
+修改密码
+'''
+class SetPasswordView(View):
+    def get(self, request):
+        return render(request, 'set_password.html', {})
+
+    def post(self, request):
+        return HttpResponse(json.dumps({"status": "success", "msg": "修改密码成功!"}), content_type="application/json")
+
+
+'''
+查看报表
+'''
+
