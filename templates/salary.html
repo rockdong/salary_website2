@@ -19,17 +19,19 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4 text-center">
-                            <div class="col-sm-6">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4 text-center">
+                            <div class="col-sm-6 form-group">
+                                <label for="">开始日期</label>
                                 <div class="input-group date form_date">
-                                    <input type="text" class="form-control" name="start_date" readonly>
+                                    <input type="text" class="form-control" id="start_date" readonly>
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-6 form-group">
+                                <label for="">结束日期</label>
                                 <div class="input-group date form_date">
-                                    <input type="text" class="form-control" name="end_date" readonly>
+                                    <input type="text" class="form-control" id="end_date" readonly>
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                             </div>
@@ -123,6 +125,31 @@
     <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
     <script src="{% static 'js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
     <script>
+        $('.form_date').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 3,
+            minView: 3,
+            forceParse: 0,
+            format: 'yyyy-mm',
+            showMeridian: 1
+        }).on('changeDate', function (ev) {
+            var start = $("#start_date").val();
+            var end = $("#end_date").val();
+            if( start != "" && end != "")
+            {
+                if( end >= start ){
+                    // 执行工资查询
+                }else{
+                    ev.date = ""
+                    alert("你选择的日期开始时间和结束时间不对")
+                }
+            }
+        });
+
         $(".btn-danger").click(function () {
             var id = this.getAttribute("id");
             $.ajax({
@@ -132,15 +159,15 @@
                 success: function (result) {
                     if("success" == result.status) {
                         swal({
-                                title: "执行成功",
-                                text: result.msg,
-                                type: "success",
-                                timer: 1000,
-                                showConfirmButton: false
-                            },
-                            function () {
-                                location.href = '{% url 'user_list' %}';
-                            });
+                                    title: "执行成功",
+                                    text: result.msg,
+                                    type: "success",
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                },
+                                function () {
+                                    location.href = '{% url 'user_list' %}';
+                                });
                     }else{
                         sweetAlert("失败!", result.msg, "error");
                     }
