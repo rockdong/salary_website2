@@ -18,7 +18,7 @@ from django.views.generic import View
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from user_profile.models import UserProfile
-from salary.models import Salary
+# from salary.models import Salary
 
 from user_profile.forms import LoginForm, RegisterForm
 
@@ -223,14 +223,7 @@ class DataAddView(View):
 '''
 class SalaryView(View):
     def get(self, request, name):
-        all_salary = Salary.objects.filter(user__name=name)
-        try:
-            page = request.GET.get('page', 1)
-        except PageNotAnInteger:
-            page = 1
-        p = Paginator(all_salary, 5, request=request)
-        salarys = p.page(page)
-        return render(request, 'salary.html', {"salarys": salarys})
+        return render(request, 'salary.html', {})
 
 
 '''
