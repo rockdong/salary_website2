@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS [salary_govperformanceappraisa];
+CREATE TABLE [salary_govperformanceappraisa]([rowid] integer, [id] integer, [date] date, [standard] real, [amount] real, [ratio] real, [other] real, [user_id] integer, [tax] real);
+
+INSERT INTO [salary_govperformanceappraisa]([rowid], [id], [date], [standard], [amount], [ratio], [other], [user_id], [tax])
+VALUES(1, 1, '2017-04-30', 10910, 27275, 2.5, 0, 4, 163.75);
+

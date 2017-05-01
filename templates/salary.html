@@ -12,7 +12,7 @@
     <div class="app-content-body">
         <div>
             <div class="col2 bg-light lter b-b wrapper-md">
-                <h1 class="m-n font-thin h3">工资查看</h1>
+                <h1 class="m-n font-thin h3">{{ request.user.name }} 工资条</h1>
             </div>
         </div>
         <div class="wrapper-md">
@@ -24,14 +24,14 @@
                             <div class="col-sm-6 form-group">
                                 <label for="">开始日期</label>
                                 <div class="input-group date form_date">
-                                    <input type="text" class="form-control" id="start_date" readonly>
+                                    <input type="text" class="form-control" id="start_date" name="start_date" value="{{ start_date | date:'Y-m' }}" readonly>
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                             </div>
                             <div class="col-sm-6 form-group">
                                 <label for="">结束日期</label>
                                 <div class="input-group date form_date">
-                                    <input type="text" class="form-control" id="end_date" readonly>
+                                    <input type="text" class="form-control" id="end_date" name="end_date" value="{{ end_date | date:'Y-m' }}" readonly>
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                             </div>
@@ -46,19 +46,23 @@
                                     <th class="text-center" style="width:20%">日期</th>
                                     <th class="text-center" style="width:20%">应发金额</th>
                                     <th class="text-center" style="width:20%">应扣金额</th>
-                                    <th class="text-center" style="width:20%">补发金额</th>
+                                    <th class="text-center" style="width:20%">实发金额</th>
                                     <th class="text-center" style="width:20%">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for salary in salarys.object_list %}
+                                {% for data in datas %}
                                     <tr>
-                                        <td class="text-center">{{ salary.date | date:'Y-m-d' }}</td>
-                                        <td class="text-center">{{ salary.salary }}</td>
-                                        <td class="text-center">{{ salary.salary }}</td>
-                                        <td class="text-center">{{ salary.salary }}</td>
-                                        <td class="text-center">{{ salary.salary }}</td>
-                                        <td class="text-center"><a href="" class="btn btn-info btn-xs">查看</a></td>
+                                        <td class="text-center">{{ data.date | date:'Y-m' }}</td>
+                                        <td class="text-center">{{ data.salary }}</td>
+                                        <td class="text-center">{{ data.discount }}</td>
+                                        <td class="text-center">{{ data.really_salary }}</td>
+                                        <td class="text-center">
+                                            {% ifnotequal data.salary "无数据" %}
+                                                <a href="/index/salary_detail/{{ start_date | date:'Y-m' }}/{{ data.date | date:'Y-m' }}/{{ end_date | date:'Y-m' }}/" class="btn btn-info btn-xs">查看</a>
+                                            {% endifnotequal %}
+
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -93,6 +97,7 @@
             {
                 if( end >= start ){
                     // 执行工资查询
+                    location.href="/index/salary/" + start + "/" + end + "/";
                 }else{
                     sweetAlert("错误!", "你选择的结束日期不能小于开始日期", "error");
                 }
@@ -108,15 +113,15 @@
                 success: function (result) {
                     if("success" == result.status) {
                         swal({
-                                    title: "执行成功",
-                                    text: result.msg,
-                                    type: "success",
-                                    timer: 1000,
-                                    showConfirmButton: false
-                                },
-                                function () {
-                                    location.href = '{% url 'user_list' %}';
-                                });
+                                title: "执行成功",
+                                text: result.msg,
+                                type: "success",
+                                timer: 1000,
+                                showConfirmButton: false
+                            },
+                            function () {
+                                location.href = '{% url 'user_list' %}';
+                            });
                     }else{
                         sweetAlert("失败!", result.msg, "error");
                     }

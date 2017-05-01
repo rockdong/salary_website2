@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS [salary_reallysalary];
+CREATE TABLE [salary_reallysalary]([rowid] integer, [id] integer, [date] date, [post_wage] real, [level_wage] real, [area_allowance] real, [base_allowance] real, [special_post_allowance] real, [shortage_post] real, [nursing_age] integer, [urance_benefit] real, [housing_fund] real, [housing_fund2] real, [tax] real, [rent] real, [other] real, [user_id] integer, [utilities] real);
+
+INSERT INTO [salary_reallysalary]([rowid], [id], [date], [post_wage], [level_wage], [area_allowance], [base_allowance], [special_post_allowance], [shortage_post], [nursing_age], [urance_benefit], [housing_fund], [housing_fund2], [tax], [rent], [other], [user_id], [utilities])
+VALUES(1, 1, '2017-04-30', 1760, 1512, 1880, 5786, 0, 0, 0, 394.17, 1091, 0, 411.77, 0, 0, 4, 0);
+
