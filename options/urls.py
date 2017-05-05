@@ -5,7 +5,9 @@ __date__ = '2017/3/19 21:12'
 
 from django.conf.urls import url
 
-from options.views import IndexView, AddUserView, UserListView, UserDeleteView, SalaryView, SetPasswordView, SalaryDetailView, SalaryDetailInfoView
+from options.views import IndexView, AddUserView, UserListView, \
+    UserDeleteView, SalaryView, SetPasswordView, SalaryDetailView,\
+    SalaryDetailInfoView, SalaryCollectView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='index'),
@@ -15,5 +17,6 @@ urlpatterns = [
     url(r'^salary/(?P<start_date>.*)/(?P<end_date>.*)/', SalaryView.as_view(), name='salary'),
     url(r'^salary_detail/(?P<start_date>.*)/(?P<cur_date>.*)/(?P<end_date>.*)/', SalaryDetailView.as_view(), name='salary_detail'),
     url(r'^salary_detail_info/', SalaryDetailInfoView.as_view(), name='salary_detail_info'),
+    url(r'^salary_collect/', SalaryCollectView.as_view(), name='salary_collect'),
     url(r'^set_password/', SetPasswordView.as_view(), name='set_password'),
 ]

@@ -1,0 +1,179 @@
+
+{% extends 'index.html' %}
+{% load staticfiles %}
+<!-- content -->
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type="text/css"/>
+{% endblock %}
+
+{% block content %}
+
+    <div class="app-content-body">
+        <div>
+            <div class="col2 bg-light lter b-b wrapper-md">
+                <h1 class="m-n font-thin h3">{{ request.user.name }} 工资汇总</h1>
+            </div>
+        </div>
+        <div class="wrapper-md">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4 text-center">
+                            <div class="col-sm-6 form-group">
+                                <label for="">开始日期</label>
+                                <div class="input-group date form_date">
+                                    <input type="text" class="form-control" id="start_date" name="start_date" value="{{ start_date | date:'Y-m' }}" readonly>
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <label for="">结束日期</label>
+                                <div class="input-group date form_date">
+                                    <input type="text" class="form-control" id="end_date" name="end_date" value="{{ end_date | date:'Y-m' }}" readonly>
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="echars" style="width: 600px;height: 350px" class="col-sm-offset-4">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+    <script src="{% static 'js/echarts.js' %}"></script>
+    <script>
+        var myChart = echarts.init(document.getElementById('echars'));
+
+        var option = {};
+
+        function initReport() {
+            option = {
+                title : {
+                    text: '某年某月 - 某年某月 工资统计',
+                    subtext: '应收',
+                    x:'center'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['扣所得税','实收合计']
+                },
+                series : [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius : '55%',
+                        center: ['50%', '60%'],
+                        data:[
+                            {value:335, name:'扣所得税'},
+                            {value:1548, name:'实收合计'}
+                        ],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+
+
+        $(function () {
+            $('.form_date').datetimepicker({
+                language:  'zh-CN',
+                weekStart: 1,
+                todayBtn:  1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 3,
+                minView: 3,
+                forceParse: 0,
+                format: 'yyyy-mm',
+                showMeridian: 1
+            }).on('changeDate', function (ev) {
+                var start = $("#start_date").val();
+                var end = $("#end_date").val();
+                if( start != "" && end != "")
+                {
+                    if( end >= start ){
+                        // 执行工资查询
+                        $.ajax({
+                            url: "{% url 'salary_collect' %}",
+                            type: "POST",
+                            data: {csrfmiddlewaretoken: '{{ csrf_token }}', start_date: start, end_date: end},
+                            success: function (result) {
+                                if("success" == result.status) {
+                                    option.title.text = start + " - " + end + " 工资统计";
+                                    option.title.subtext = "应收合计:" + result.salary;
+                                    option.series[0].data = [{value:result.discount, name:'扣所得税'}, {value:result.really_salary, name:'实收合计'}];
+                                    myChart.setOption(option);
+                                }else{
+                                    sweetAlert("失败!", "数据返回出错!", "error");
+                                }
+                            },
+                            error: function () {
+                                sweetAlert("错误!", "数据出错!", "error");
+                            }
+                        });
+                    }else{
+                        sweetAlert("错误!", "你选择的结束日期不能小于开始日期", "error");
+                    }
+                }
+            });
+
+            $(".btn-danger").click(function () {
+                var id = this.getAttribute("id");
+                $.ajax({
+                    url: "/index/user_delete/"+id+"/",
+                    data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                    type: "POST",
+                    success: function (result) {
+                        if("success" == result.status) {
+                            swal({
+                                    title: "执行成功",
+                                    text: result.msg,
+                                    type: "success",
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                },
+                                function () {
+                                    location.href = '{% url 'user_list' %}';
+                                });
+                        }else{
+                            sweetAlert("失败!", result.msg, "error");
+                        }
+                    },
+                    error: function (result) {
+                        sweetAlert("错误!", result.msg, "error");
+                    }
+                });
+            });
+
+            initReport();
+        });
+
+
+    </script>
+{% endblock %}

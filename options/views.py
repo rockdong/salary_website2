@@ -52,6 +52,62 @@ def getSalary(cur_user, cur_date):
     return pyepa, gpa, sba, cda, rs, f
 
 
+# 根据日期获取集合
+def getData(cur_user, cur_date):
+    data = {}
+    try:
+        pyepa, gpa, sba, cda, rs, f = getSalary(cur_user, cur_date)
+
+        # 日期
+        data['date'] = cur_date
+        # 应发合计
+        data['salary'] = getSalaryCount(pyepa, gpa, sba, cda, rs, f)
+        # 应扣合计
+        data['discount'] = getSalaryDiscount(pyepa, gpa, sba, cda, rs, f)
+        # 实发合计
+        data['really_salary'] = getSalaryReallyCount(pyepa, gpa, sba, cda, rs, f)
+        return data
+    except Exception as e:
+        # 日期
+        data['date'] = cur_date
+        # 应发合计
+        data['salary'] = "无数据"
+        # 应扣合计
+        data['discount'] = "无数据"
+        # 实发合计
+        data['really_salary'] = "无数据"
+        return data
+
+
+
+# 应发
+def getSalaryCount(pyepa, gpa, sba, cda, rs, f):
+    try:
+        return pyepa.amount + gpa.amount + sba.amount + cda.standard + \
+               rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance + f.amount
+    except Exception as e:
+        return "无数据"
+
+# 应扣除
+def getSalaryDiscount(pyepa, gpa, sba, cda, rs, f):
+    try:
+        return gpa.tax + cda.tax + rs.urance_benefit + \
+               rs.housing_fund + rs.housing_fund2 + rs.tax + \
+               rs.rent + rs.utilities + rs.other
+    except Exception as e:
+        return "无数据"
+
+# 实发
+def getSalaryReallyCount(pyepa, gpa, sba, cda, rs, f):
+    try:
+        return pyepa.amount + gpa.amount - gpa.tax + sba.amount + cda.standard - cda.tax + \
+               rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance - \
+               rs.urance_benefit - rs.housing_fund - rs.housing_fund2 - rs.tax - \
+               rs.rent - rs.utilities - rs.other + f.amount
+    except Exception as e:
+        return "无数据"
+
+
 '''
 用户登陆
 '''
@@ -105,7 +161,7 @@ class RegisterView(View):
             if register_form.is_valid():
                 username = request.POST.get('username', '')
                 user = UserProfile.objects.filter(username=username).exists()
-                if not user :
+                if not user:
                     user = UserProfile()
                     user.username = username
                     user.password = make_password(request.POST.get('password', ''))
@@ -208,72 +264,21 @@ class SalaryView(View):
             datas = []
             date = startDate
             last = startDate
-            datas.append(self.getData(cur_user, date))
+            datas.append(getData(cur_user, date))
             while date < endDate:
                 date = date + datetime.timedelta(weeks=4)
                 date = datetime.datetime(date.year, date.month, 1)
                 if date == last:
                     date = date + datetime.timedelta(weeks=1)
                 else:
-                    datas.append(self.getData(cur_user, date))
+                    datas.append(getData(cur_user, date))
                 last = date
 
             return render(request, 'salary.html', {"datas": datas, "start_date": startDate, "end_date": endDate})
         except Exception as e:
             return render(request, 'salary.html', {})
 
-    # 根据日期获取集合
-    def getData(self, cur_user, cur_date):
-        data = {}
-        try:
-            pyepa, gpa, sba, cda, rs, f = getSalary(cur_user, cur_date)
 
-            # 日期
-            data['date'] = cur_date
-            # 应发合计
-            data['salary'] = self.getSalaryCount(pyepa, gpa, sba, cda, rs, f)
-            # 应扣合计
-            data['discount'] = self.getSalaryDiscount(pyepa, gpa, sba, cda, rs, f)
-            # 实发合计
-            data['really_salary'] = self.getSalaryReallyCount(pyepa, gpa, sba, cda, rs, f)
-            return data
-        except Exception as e:
-            # 日期
-            data['date'] = cur_date
-            # 应发合计
-            data['salary'] = "无数据"
-            # 应扣合计
-            data['discount'] = "无数据"
-            # 实发合计
-            data['really_salary'] = "无数据"
-            return data
-
-    # 应发
-    def getSalaryCount(self, pyepa, gpa, sba, cda, rs, f):
-        try:
-            return pyepa.amount + gpa.amount + sba.amount + cda.standard + \
-                   rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance + f.amount
-        except Exception as e:
-            return "无数据"
-
-    # 应扣除
-    def getSalaryDiscount(self, pyepa, gpa, sba, cda, rs, f):
-        try:
-            return gpa.tax + cda.tax + rs.urance_benefit + \
-                   rs.housing_fund + rs.housing_fund2 + rs.tax + \
-                   rs.rent + rs.utilities + rs.other
-        except Exception as e:
-            return "无数据"
-
-    # 实发
-    def getSalaryReallyCount(self, pyepa, gpa, sba, cda, rs, f):
-        try:
-            return pyepa.amount + gpa.amount - gpa.tax + sba.amount + cda.standard - cda.tax + \
-                   rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance - \
-                   rs.urance_benefit - rs.housing_fund - rs.housing_fund2 - rs.tax - \
-                   rs.rent - rs.utilities - rs.other + f.amount
-        except Exception as e:
-            return "无数据"
 
 
 '''
@@ -423,6 +428,52 @@ class SalaryDetailInfoView(View):
             return HttpResponse(json.dumps({"status": "success", "data": data}), content_type="application/json")
         except Exception as e:
             return HttpResponse(json.dumps({"status": "fail", "msg": "查询错误!"}), content_type="application/json")
+
+
+class SalaryCollectView(View):
+    def get(self, request):
+        return render(request, 'salary_collect.html', {})
+
+    def post(self, request):
+        try:
+            cur_user = request.user
+
+            start_date = datetime.datetime.strptime(request.POST.get('start_date', None), '%Y-%m')
+            end_date = datetime.datetime.strptime(request.POST.get('end_date', None), '%Y-%m')
+
+            temp_data = {}
+            date = start_date
+            last = end_date
+
+            salary = 0.0
+            # 应扣合计
+            discount = 0.0
+            # 实发合计
+            really_salary = 0.0
+
+            temp_data = getData(cur_user, date)
+
+            salary += temp_data['salary']
+            discount += temp_data['discount']
+            really_salary += temp_data['really_salary']
+
+            while date < end_date:
+                date = date + datetime.timedelta(weeks=4)
+                date = datetime.datetime(date.year, date.month, 1)
+                if date == last:
+                    date = date + datetime.timedelta(weeks=1)
+                else:
+                    temp_data = getData(cur_user, date)
+                    salary += temp_data['salary']
+                    discount += temp_data['discount']
+                    really_salary += temp_data['really_salary']
+                last = date
+
+            return HttpResponse(json.dumps({"status": "success", "start_date": start_date.strftime('%Y-%m'), "end_date": end_date.strftime('%Y-%m'), \
+                                            "salary": salary, "discount": discount, "really_salary": really_salary \
+                                            }), content_type="application/json")
+        except Exception as e:
+            return render(request, 'salary_collect.html', {})
 
 
 '''
