@@ -1,6 +1,9 @@
 # _*_ coding:utf-8 _*_
 
 import os
+import threading
+import time
+from salary_system.settings import FILE_ROOT
 
 from django.shortcuts import render
 from django.core.serializers import serialize
@@ -430,6 +433,9 @@ class SalaryDetailInfoView(View):
             return HttpResponse(json.dumps({"status": "fail", "msg": "查询错误!"}), content_type="application/json")
 
 
+'''
+查看报表
+'''
 class SalaryCollectView(View):
     def get(self, request):
         return render(request, 'salary_collect.html', {})
@@ -487,7 +493,93 @@ class SetPasswordView(View):
         return HttpResponse(json.dumps({"status": "success", "msg": "修改密码成功!"}), content_type="application/json")
 
 
-'''
-查看报表
-'''
 
+'''
+上传文件
+'''
+class DataUpdateView(View):
+    def get(self, request):
+        return render(request, 'add_data.html', {})
+
+    def post(self, request):
+        self.trafficFile(request)
+        self.basicFile(request)
+        self.salaryFile(request)
+        self.festivalFile(request)
+        self.onlyFile(request)
+        self.familyFile(request)
+        self.temporaryFile(request)
+        self.otherFile(request)
+        return HttpResponse(json.dumps({"status": "success", "msg": "文件读取完毕!"}), content_type="application/json")
+
+    #交通补贴
+    def trafficFile(self, request):
+        file = request.FILES.get('traffic', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #基层补贴
+    def basicFile(self, request):
+        file = request.FILES.get('basic', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #补发工资
+    def salaryFile(self, request):
+        file = request.FILES.get('salary', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #过节费
+    def festivalFile(self, request):
+        file = request.FILES.get('festival', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #独生子女费
+    def onlyFile(self, request):
+        file = request.FILES.get('only', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #计生奖
+    def familyFile(self, request):
+        file = request.FILES.get('family', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #临时补贴
+    def temporaryFile(self, request):
+        file = request.FILES.get('temporary', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+    #其他项目
+    def otherFile(self, request):
+        file = request.FILES.get('other', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()

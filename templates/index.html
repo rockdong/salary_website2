@@ -156,6 +156,11 @@
                                 <span>修改密码</span>
                             </a>
                         </li>
+                        <li>
+                            <a name="add_data" href="{% url 'add_data' %}">
+                                <span>更新数据</span>
+                            </a>
+                        </li>
                         {% if request.user.is_superuser %}
                             <li>
                                 <a href="" class="auto" href="#">

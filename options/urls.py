@@ -7,7 +7,7 @@ from django.conf.urls import url
 
 from options.views import IndexView, AddUserView, UserListView, \
     UserDeleteView, SalaryView, SetPasswordView, SalaryDetailView,\
-    SalaryDetailInfoView, SalaryCollectView
+    SalaryDetailInfoView, SalaryCollectView, DataUpdateView
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='index'),
@@ -19,4 +19,5 @@ urlpatterns = [
     url(r'^salary_detail_info/', SalaryDetailInfoView.as_view(), name='salary_detail_info'),
     url(r'^salary_collect/', SalaryCollectView.as_view(), name='salary_collect'),
     url(r'^set_password/', SetPasswordView.as_view(), name='set_password'),
+    url(r'^add_data/', DataUpdateView.as_view(), name='add_data'),
 ]

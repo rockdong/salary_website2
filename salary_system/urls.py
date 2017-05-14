@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from options.views import LoginView, RegisterView, LogoutView
-from salary_system.settings import STATIC_ROOT
+from salary_system.settings import STATIC_ROOT, FILE_ROOT
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -25,5 +25,5 @@ urlpatterns = [
     url(r'^$', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^register/', RegisterView.as_view(), name='register'),
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT}),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': FILE_ROOT}),
 ]
