@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^$', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^register/', RegisterView.as_view(), name='register'),
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': FILE_ROOT}),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT}),
+    url(r'^update/(?P<path>.*)$', 'django.views.static.serve', {'document_root': FILE_ROOT}),
 ]
