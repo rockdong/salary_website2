@@ -51,7 +51,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for data in datas %}
+                                {% for data in datas reversed %}
                                     <tr>
                                         <td class="text-center">{{ data.date | date:'Y-m' }}</td>
                                         <td class="text-center">{{ data.salary }}</td>

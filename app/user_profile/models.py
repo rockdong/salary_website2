@@ -10,6 +10,9 @@ from django.contrib.auth.models import AbstractUser
 
 class UserProfile(AbstractUser):
     name = models.CharField(max_length=20, null=False, blank=False, verbose_name='姓名')
+    user_code = models.CharField(max_length=20, default='', verbose_name='人员编码')
+    pid = models.CharField(max_length=18, default='', verbose_name='身份证号码')
+    card_num = models.CharField(max_length=20, default='', verbose_name='工资卡号')
 
     class Meta:
         verbose_name = '成员'

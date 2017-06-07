@@ -1,4 +1,9 @@
 {% extends 'index.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type="text/css"/>
+{% endblock %}
 
 {% block content %}
 
@@ -10,31 +15,28 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 {#                人员录入表单#}
-                <form id="data_add_form" enctype="multipart/form-data" class="form-horizontal col-sm-6 col-sm-offset-3"
+                <form id="data_add_form" enctype="multipart/form-data" class="form-horizontal"
                       method="post">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">交通补贴:</label>
-                        <div class="col-sm-10">
-                            <input name="traffic" type="file" class="form-control form-control-file">
+                        <div class="col-sm-3 col-sm-offset-5">
+                            <label for="">请选择导入数据日期，如果当月请为空</label>
+                            <div class="input-group date form_date">
+                                <input type="text" class="form-control" id="date" name="date" readonly>
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">基层补贴:</label>
+                        <label class="col-sm-2 control-label" for="input-id-1">家属统筹医疗费发放:</label>
                         <div class="col-sm-10">
-                            <input name="basic" type="file" class="form-control form-control-file">
+                            <input name="medical" type="file" class="form-control form-control-file">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">补发工资:</label>
+                        <label class="col-sm-2 control-label" for="input-id-1">未休年休假工资报酬发放:</label>
                         <div class="col-sm-10">
-                            <input name="salary" type="file" class="form-control form-control-file">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">过节费:</label>
-                        <div class="col-sm-10">
-                            <input name="festival" type="file" class="form-control form-control-file">
+                            <input name="vacation" type="file" class="form-control form-control-file">
                         </div>
                     </div>
                     <div class="form-group">
@@ -44,21 +46,39 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">计生奖:</label>
+                        <label class="col-sm-2 control-label" for="input-id-1">绩效考核奖发放:</label>
                         <div class="col-sm-10">
-                            <input name="family" type="file" class="form-control form-control-file">
+                            <input name="performanceAppraisa" type="file" class="form-control form-control-file">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">临时补贴:</label>
+                        <label class="col-sm-2 control-label" for="input-id-1">非统发人员工资及统发人员津贴发放:</label>
                         <div class="col-sm-10">
-                            <input name="temporary" type="file" class="form-control form-control-file">
+                            <input name="nonStaff" type="file" class="form-control form-control-file">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-id-1">其他项目:</label>
+                        <label class="col-sm-2 control-label" for="input-id-1">过节费:</label>
                         <div class="col-sm-10">
-                            <input name="other" type="file" class="form-control form-control-file">
+                            <input name="holiday" type="file" class="form-control form-control-file">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-id-1">基层补贴:</label>
+                        <div class="col-sm-10">
+                            <input name="basic" type="file" class="form-control form-control-file">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-id-1">养老保险临时补贴:</label>
+                        <div class="col-sm-10">
+                            <input name="old" type="file" class="form-control form-control-file">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-id-1">补发考核奖:</label>
+                        <div class="col-sm-10">
+                            <input name="performanceAppraisaFix" type="file" class="form-control form-control-file">
                         </div>
                     </div>
                     <div class="text-right">
@@ -73,42 +93,39 @@
 {% endblock %}
 
 {% block js %}
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
     <script>
+        $('.form_date').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 3,
+            minView: 3,
+            forceParse: 0,
+            format: 'yyyy-mm',
+            showMeridian: 1
+        });
+
         $(".btn-info").click(function () {
             var data = new FormData($("#data_add_form").get(0));
 
             var inputs = new Array();
-            if(data.get("traffic").name != "") {
-                var filename = data.get("traffic").name;
+            if(data.get("medical").name != "") {
+                var filename = data.get("medical").name;
                 if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
                 }
                 inputs[inputs.length] = filename;
             }
-            if(data.get("basic").name != "") {
-                var filename = data.get("basic").name;
+            if(data.get("vacation").name != "") {
+                var filename = data.get("vacation").name;
                 if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
-                    sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
-                    return ;
-                }
-                inputs[inputs.length] = filename;
-            }
-            if(data.get("salary").name != "") {
-                var filename = data.get("salary").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
-                    sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
-                    return ;
-                }
-                inputs[inputs.length] = filename;
-            }
-            if(data.get("festival").name != "") {
-                var filename = data.get("festival").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
                 }
@@ -117,39 +134,67 @@
             if(data.get("only").name != "") {
                 var filename = data.get("only").name;
                 if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
                 }
                 inputs[inputs.length] = filename;
             }
-            if(data.get("family").name != "") {
-                var filename = data.get("family").name;
+            if(data.get("performanceAppraisa").name != "") {
+                var filename = data.get("performanceAppraisa").name;
                 if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
                 }
                 inputs[inputs.length] = filename;
             }
-            if(data.get("temporary").name != "") {
-                var filename = data.get("temporary").name;
+            if(data.get("nonStaff").name != "") {
+                var filename = data.get("nonStaff").name;
                 if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
                 }
                 inputs[inputs.length] = filename;
             }
-            if(data.get("other").name != "") {
-                var filename = data.get("other").name;
+            if(data.get("holiday").name != "") {
+                var filename = data.get("holiday").name;
                 if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
-                    filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
                 }
                 inputs[inputs.length] = filename;
             }
+            if(data.get("basic").name != "") {
+                var filename = data.get("basic").name;
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                    sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
+                    return ;
+                }
+                inputs[inputs.length] = filename;
+            }
+            if(data.get("old").name != "") {
+                var filename = data.get("old").name;
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                    sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
+                    return ;
+                }
+                inputs[inputs.length] = filename;
+            }
+            if(data.get("performanceAppraisaFix").name != "") {
+                var filename = data.get("performanceAppraisaFix").name;
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                    sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
+                    return ;
+                }
+                inputs[inputs.length] = filename;
+            }
+
 
             if(inputs.length < 1) {
                 sweetAlert("文件列表为空", "请选择需要上传的文件", "error");
@@ -159,8 +204,9 @@
             // 文件校验
             if(inputs.length > 1) {
                 for (var i = 0; i < inputs.length - 1; ++i) {
-                    for (var j = 1; j < inputs.length; ++j) {
+                    for (var j = i + 1; j < inputs.length; ++j) {
                         if (inputs[i] == inputs[j]) {
+                            alert(i + " | "+ j)
                             sweetAlert("文件名重复", "重复文件名:" + inputs[i], "error");
                             return ;
                         }
@@ -178,15 +224,15 @@
                 success: function (result) {
                     if("success" == result.status) {
                         swal({
-                                title: "执行成功",
-                                text: result.msg,
-                                type: "success",
-                                timer: 1000,
-                                showConfirmButton: false
-                            },
-                            function () {
-                                location.href = '{% url 'add_data' %}';
-                            });
+                                    title: "执行成功",
+                                    text: result.msg,
+                                    type: "success",
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                },
+                                function () {
+                                    location.href = '{% url 'add_data' %}';
+                                });
                     }else{
                         sweetAlert("执行失败", result.msg, "error");
                     }

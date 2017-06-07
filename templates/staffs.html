@@ -29,7 +29,8 @@
                                         <td class="text-center">{{ user.name }}</td>
                                         <td class="text-center">{{ user.username }}</td>
                                         <td class="text-center">
-                                            {% if not request.user.id >= user.id %}
+                                            {% if request.user.is_superuser and user.id != request.user.id %}
+                                                <a class="btn btn-xs btn-warning" id="{{ user.id }}">修改</a>
                                                 <a class="btn btn-xs btn-danger" id="{{ user.id }}">删除</a>
                                             {% endif %}
                                         </td>
@@ -96,30 +97,89 @@
 
 {% block js %}
     <script>
+        $(".btn-warning").click(function () {
+            swal({
+                title: "你确定要删除此用户吗?",
+                text: "删除后此用户将不可使用!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确认删除",
+                cancelButtonColor: "#4187dd",
+                cancelButtonText: "取消",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function(isConfirm){
+                if (isConfirm) {
+                    var id = this.getAttribute("id");
+                    $.ajax({
+                        url: "/index/user_delete/"+id+"/",
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        type: "POST",
+                        success: function (result) {
+                            if("success" == result.status) {
+                                swal({
+                                        title: "执行成功",
+                                        text: result.msg,
+                                        type: "success",
+                                        timer: 1000,
+                                        showConfirmButton: false
+                                    },
+                                    function () {
+                                        location.href = '{% url 'user_list' %}';
+                                    });
+                            }else{
+                                sweetAlert("失败!", result.msg, "error");
+                            }
+                        },
+                        error: function (result) {
+                            sweetAlert("错误!", result.msg, "error");
+                        }
+                    });
+                } else {
+                    swal("Cancelled", "Your imaginary file is safe :)", "error");
+                }
+            });
+        });
+
         $(".btn-danger").click(function () {
-            var id = this.getAttribute("id");
-            $.ajax({
-                url: "/index/user_delete/"+id+"/",
-                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-                type: "POST",
-                success: function (result) {
-                    if("success" == result.status) {
-                        swal({
-                                    title: "执行成功",
-                                    text: result.msg,
-                                    type: "success",
-                                    timer: 1000,
-                                    showConfirmButton: false
-                                },
-                                function () {
-                                    location.href = '{% url 'user_list' %}';
-                                });
-                    }else{
-                        sweetAlert("失败!", result.msg, "error");
-                    }
-                },
-                error: function (result) {
-                    sweetAlert("错误!", result.msg, "error");
+            swal({
+                title: "你确定要删除此用户吗?",
+                text: "删除后此用户将不可使用!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确认删除",
+                cancelButtonText: "取消",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function(isConfirm){
+                if (isConfirm) {
+                    var id = this.getAttribute("id");
+                    $.ajax({
+                        url: "/index/user_delete/"+id+"/",
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        type: "POST",
+                        success: function (result) {
+                            if("success" == result.status) {
+                                swal({
+                                        title: "执行成功",
+                                        text: result.msg,
+                                        type: "success",
+                                        timer: 1000,
+                                        showConfirmButton: false
+                                    },
+                                    function () {
+                                        location.href = '{% url 'user_list' %}';
+                                    });
+                            }else{
+                                sweetAlert("失败!", result.msg, "error");
+                            }
+                        },
+                        error: function (result) {
+                            sweetAlert("错误!", result.msg, "error");
+                        }
+                    });
                 }
             });
         });

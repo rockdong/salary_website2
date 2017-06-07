@@ -29,47 +29,62 @@ from user_profile.forms import LoginForm, RegisterForm
 # 获取 所有对像
 def getSalary(cur_user, cur_date):
     try:
-        pyepa = PreYearEndPerformanceAppraisa.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+        m = Medical.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
     except Exception as e:
-        pyepa = None
+        m = Medical()
     try:
-        gpa = GovPerformanceAppraisa.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+        th = TackHoliday.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
     except Exception as e:
-        gpa = None
+        th = TackHoliday()
     try:
-        sba = SpecialBenefitAward.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+        h = Holiday.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
     except Exception as e:
-        sba = None
+        h = Holiday()
     try:
-        cda = CadreDutyAward.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+        sc = SingleChild.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
     except Exception as e:
-        cda = None
+        sc = SingleChild()
     try:
-        rs = ReallySalary.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+        pa = PerformanceAppraisa.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
     except Exception as e:
-        rs = None
+        pa = PerformanceAppraisa()
     try:
-        f = Food.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+        ns = NonStaff.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
     except Exception as e:
-        f = None
-    return pyepa, gpa, sba, cda, rs, f
+        ns = NonStaff()
+    try:
+        a = Assess.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+    except Exception as e:
+        a = Assess()
+    try:
+        p = Provide.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+    except Exception as e:
+        p = Provide()
+    try:
+        b = Basic.objects.get(user=cur_user, date__year=cur_date.year, date__month=cur_date.month)
+    except Exception as e:
+        b = Basic()
+    return m, th, h, sc, pa, ns, a, p, b
 
 
 # 根据日期获取集合
 def getData(cur_user, cur_date):
     data = {}
     try:
-        pyepa, gpa, sba, cda, rs, f = getSalary(cur_user, cur_date)
+        m, th, h, sc, pa, ns, a, p, b = getSalary(cur_user, cur_date)
 
-        # 日期
-        data['date'] = cur_date
-        # 应发合计
-        data['salary'] = getSalaryCount(pyepa, gpa, sba, cda, rs, f)
-        # 应扣合计
-        data['discount'] = getSalaryDiscount(pyepa, gpa, sba, cda, rs, f)
-        # 实发合计
-        data['really_salary'] = getSalaryReallyCount(pyepa, gpa, sba, cda, rs, f)
-        return data
+        if m.pk is not None or th.pk is not None or h.pk is not None or \
+            sc.pk is not None or pa.pk is not None or ns.pk is not None or \
+            a.pk is not None or p.pk is not None or b.pk is not None :
+            # 日期
+            data['date'] = cur_date
+            # 应发合计
+            data['salary'] = getSalaryCount(m, th, h, sc, pa, ns, a, p, b)
+            # 应扣合计
+            data['discount'] = getSalaryDiscount(m, th, h, sc, pa, ns, a, p, b)
+            # 实发合计
+            data['really_salary'] = data['salary'] - data['discount']
+            return data
     except Exception as e:
         # 日期
         data['date'] = cur_date
@@ -84,31 +99,28 @@ def getData(cur_user, cur_date):
 
 
 # 应发
-def getSalaryCount(pyepa, gpa, sba, cda, rs, f):
+def getSalaryCount(m, th, h, sc, pa, ns, a, p, b):
     try:
-        return pyepa.amount + gpa.amount + sba.amount + cda.standard + \
-               rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance + f.amount
+        return m.salary + th.salary + sc.salary + pa.award + h.salary + ns.salary + ns.old + ns.house_fix + a.salary + p.salary + b.salary
     except Exception as e:
         return "无数据"
 
 # 应扣除
-def getSalaryDiscount(pyepa, gpa, sba, cda, rs, f):
+def getSalaryDiscount(m, th, h, sc, pa, ns, a, p, b):
     try:
-        return gpa.tax + cda.tax + rs.urance_benefit + \
-               rs.housing_fund + rs.housing_fund2 + rs.tax + \
-               rs.rent + rs.utilities + rs.other
+        return pa.tax + ns.house_p
     except Exception as e:
         return "无数据"
 
-# 实发
-def getSalaryReallyCount(pyepa, gpa, sba, cda, rs, f):
-    try:
-        return pyepa.amount + gpa.amount - gpa.tax + sba.amount + cda.standard - cda.tax + \
-               rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance - \
-               rs.urance_benefit - rs.housing_fund - rs.housing_fund2 - rs.tax - \
-               rs.rent - rs.utilities - rs.other + f.amount
-    except Exception as e:
-        return "无数据"
+# # 实发
+# def getSalaryReallyCount(m, th, sc, pa, ns, a, p, b):
+#     try:
+#         return pyepa.amount + gpa.amount - gpa.tax + sba.amount + cda.standard - cda.tax + \
+#                rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance - \
+#                rs.urance_benefit - rs.housing_fund - rs.housing_fund2 - rs.tax - \
+#                rs.rent - rs.utilities - rs.other + f.amount
+#     except Exception as e:
+#         return "无数据"
 
 
 '''
@@ -298,81 +310,114 @@ class SalaryDetailView(View):
     def getDatas(self, cur_user, cur_date):
         datas = []
         try:
-            pyepa, gpa, sba, cda, rs, f = getSalary(cur_user, cur_date)
-            if pyepa is not None:
+            m, th, h, sc, pa, ns, a, p, b = getSalary(cur_user, cur_date)
+            if m.pk is not None:    #统筹医疗发放
                 data = {}
-                data['type'] = 'pyepa'
+                data['type'] = 'm'
                 # 内容
-                data['title'] = pyepa.title
+                data['title'] = "统筹医疗发放"
                 # 应发合计
-                data['salary'] = pyepa.standard
+                data['salary'] = m.salary
                 # 应扣合计
-                data['discount'] = pyepa.tax
+                data['discount'] = 0.0
                 # 实发合计
-                data['really_salary'] = pyepa.amount
+                data['really_salary'] = m.salary
                 datas.append(data)
-            if gpa is not None:
+            if th.pk is not None:   #未休年休假工资报酬发放
                 data = {}
-                data['type'] = 'gpa'
+                data['type'] = 'th'
                 # 内容
-                data['title'] = gpa.title
+                data['title'] = "未休年休假工资报酬发放"
                 # 应发合计
-                data['salary'] = gpa.standard
+                data['salary'] = th.salary
                 # 应扣合计
-                data['discount'] = gpa.tax
+                data['discount'] = 0.0
                 # 实发合计
-                data['really_salary'] = gpa.amount
+                data['really_salary'] = th.salary
                 datas.append(data)
-            if sba is not None:
+            if h.pk is not None:    #节日补贴
                 data = {}
-                data['type'] = 'sba'
+                data['type'] = 'h'
                 # 内容
-                data['title'] = sba.title
+                data['title'] = h.holiday
                 # 应发合计
-                data['salary'] = sba.standard
+                data['salary'] = h.salary
                 # 应扣合计
-                data['discount'] = sba.tax
+                data['discount'] = 0.0
                 # 实发合计
-                data['really_salary'] = sba.amount
+                data['really_salary'] = h.salary
                 datas.append(data)
-            if cda is not None:
+            if sc.pk is not None:   #独生子女优待费发放
                 data = {}
-                data['type'] = 'cda'
+                data['type'] = 'sc'
                 # 内容
-                data['title'] = cda.title
+                data['title'] = "独生子女优待费发放"
                 # 应发合计
-                data['salary'] = cda.standard
+                data['salary'] = sc.salary
                 # 应扣合计
-                data['discount'] = cda.tax
+                data['discount'] = 0.0
                 # 实发合计
-                data['really_salary'] = cda.standard - cda.tax
+                data['really_salary'] = sc.salary
                 datas.append(data)
-            if rs is not None:
+            if pa.pk is not None:   #绩效考核奖发放
                 data = {}
-                data['type'] = 'rs'
+                data['type'] = 'pa'
                 # 内容
-                data['title'] = rs.title
+                data['title'] = "绩效考核奖发放"
                 # 应发合计
-                data['salary'] = rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance
+                data['salary'] = pa.salary + pa.award
                 # 应扣合计
-                data['discount'] = rs.housing_fund + rs.housing_fund2 + rs.tax + \
-                                   rs.rent + rs.utilities + rs.other
+                data['discount'] = pa.tax
                 # 实发合计
-                data['really_salary'] = rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance - \
-                                        rs.urance_benefit - rs.housing_fund - rs.housing_fund2 - rs.tax - \
-                                        rs.rent - rs.utilities - rs.other
+                data['really_salary'] = pa.salary + pa.award - pa.tax
                 datas.append(data)
-            if f is not None:
+            if ns.pk is not None:   #非统发人员工资及统发人员津贴发放
                 data = {}
-                data['type'] = 'f'
+                data['type'] = 'ns'
                 # 内容
-                data['title'] = f.title
+                data['title'] = "非统发人员工资及统发人员津贴发放"
                 # 应发合计
-                data['salary'] = f.standard
+                data['salary'] = ns.salary + ns.house_fix + ns.medical + ns.old
                 # 应扣合计
-                data['discount'] = f.tax
+                data['discount'] = ns.house_p
                 # 实发合计
-                data['really_salary'] = f.amount
+                data['really_salary'] = ns.salary + ns.house_fix + ns.medical + ns.old - ns.house_p
+                datas.append(data)
+            if a.pk is not None:   #补发考核奖发放
+                data = {}
+                data['type'] = 'a'
+                # 内容
+                data['title'] = "补发考核奖发放"
+                # 应发合计
+                data['salary'] = a.salary
+                # 应扣合计
+                data['discount'] = 0.0
+                # 实发合计
+                data['really_salary'] = a.salary
+                datas.append(data)
+            if p.pk is not None:   #养老保险临时补贴
+                data = {}
+                data['type'] = 'p'
+                # 内容
+                data['title'] = "养老保险临时补贴"
+                # 应发合计
+                data['salary'] = p.salary
+                # 应扣合计
+                data['discount'] = 0.0
+                # 实发合计
+                data['really_salary'] = p.salary
+                datas.append(data)
+            if b.pk is not None:   #基层补贴
+                data = {}
+                data['type'] = 'b'
+                # 内容
+                data['title'] = "基层补贴"
+                # 应发合计
+                data['salary'] = b.salary
+                # 应扣合计
+                data['discount'] = 0.0
+                # 实发合计
+                data['really_salary'] = b.salary
                 datas.append(data)
             return datas
         except Exception as e:
@@ -385,46 +430,37 @@ class SalaryDetailInfoView(View):
             cur_user = request.user
             type = request.POST.get('type', None)
             cur_date = datetime.datetime.strptime(request.POST.get('date', None), '%Y-%m')
-            pyepa, gpa, sba, cda, rs, f = getSalary(cur_user, cur_date)
+            m, th, h, sc, pa, ns, a, p, b = getSalary(cur_user, cur_date)
             data = {}
-            if "pyepa" == type:
-                data['title'] = pyepa.title
-                data['text'] = "标准: " + str(pyepa.standard) + "</br>数量: " + str(pyepa.index) + "</br>金额: "\
-                               + str(pyepa.amount) \
-                               + "</br>其它补: " + str(pyepa.other)  + "</br>扣所得税: " + str(pyepa.tax) \
-                               + "</br></br>实发合计: " + str(pyepa.amount)
-            elif "gpa" == type:
-                data['title'] = gpa.title
-                data['text'] = "标准: " + str(gpa.standard) + "</br>系数: " + str(gpa.ratio) + "</br>金额: " + str(gpa.amount) \
-                               + "</br>扣所得税: " + str(gpa.tax) + "</br>扣其它: " + str(gpa.other)\
-                               + "</br></br>实发合计: " + str(gpa.amount)
-            elif "sba" == type:
-                data['title'] = sba.title
-                data['text'] = "标准: " + str(sba.standard) + "</br>数量: " + str(sba.index) + "</br>金额: " + str(sba.amount) \
-                               + "</br>扣其它: " + str(sba.other) + "</br>扣所得税: " + str(sba.tax) \
-                               + "</br></br>实发合计: " + str(sba.amount)
-            elif "cda" == type:
-                data['title'] = cda.title
-                data['text'] = "职务津贴标准: " + str(cda.standard) + "</br>数量: " + str(cda.index) \
-                               + "</br>扣其它: " + str(cda.other) + "</br>扣所得税: " + str(cda.tax) \
-                               + "</br></br>实发合计: " + str(cda.standard - cda.tax)
-            elif "rs" == type:
-                data['title'] = rs.title
-                data['text'] = "岗位工资: " + str(rs.post_wage) + "</br>薪级工资: " + str(rs.level_wage)\
-                               + "</br>特区津贴: " + str(rs.area_allowance) \
-                               + "</br>基础津贴: " + str(rs.base_allowance) + "</br>特殊岗位津贴: " \
-                               + str(rs.special_post_allowance) \
-                               + "</br>紧缺岗位: " + str(rs.shortage_post) + "</br>护龄: " + str(rs.nursing_age) \
-                               + "</br>保险金: " + str(rs.urance_benefit) + "</br>住房公积金: " + str(rs.housing_fund) \
-                               + "</br>住房公积金2: " + str(rs.housing_fund2) + "</br>扣所得税: " + str(rs.tax) \
-                               + "</br>扣房租: " + str(rs.rent) + "</br>扣水电: " + str(rs.utilities) \
-                               + "</br>扣其它: " + str(rs.other) + "</br></br>实发合计: " + str(rs.post_wage + rs.level_wage + rs.area_allowance + rs.base_allowance - \
-                                            rs.urance_benefit - rs.housing_fund - rs.housing_fund2 - rs.tax - \
-                                            rs.rent - rs.utilities - rs.other)
-            elif "f" == type:
-                data['title'] = f.title
-                data['text'] = "标准: " + str(f.standard) + "</br>数量: " + str(f.index) + "</br>金额: " + str(f.amount) \
-                               + "</br>扣所得税: " + str(f.tax) + "</br></br>实发合计: " + str(f.amount)
+            if "m" == type:
+                data['title'] = "统筹医疗发放"
+                data['text'] = "应发金额:" + str(m.salary)
+            elif "th" == type:
+                data['title'] = "未休年休假工资报酬发放"
+                data['text'] = "应发金额:" + str(th.salary)
+            elif "h" == type:
+                data['title'] = m.title
+                data['text'] = "节日补贴:" + str(m.salary)
+            elif "sc" == type:
+                data['title'] = "独生子女优待费发放"
+                data['text'] = "应发金额:" + str(sc.salary)
+            elif "pa" == type:
+                data['title'] = "绩效考核奖发放"
+                data['text'] = "2.5倍考核奖:" + str(pa.award) + "</br>所得税:" + str(pa.tax) + "</br>实发合计:" + str(pa.salary)
+            elif "ns" == type:
+                data['title'] = "非统发人员工资及统发人员津贴发放"
+                data['text'] = "年金:" + str(ns.salary) + "</br>个人统筹医疗:" + str(ns.medical) \
+                               + "</br>养老补差:" + str(ns.old) + "</br>住房公积金（个人）:" + str(ns.house_p) \
+                               + "</br>住房公积金（单位）:" + str(ns.house_o) + "</br>房改住房补贴:" + str(ns.house_fix)
+            elif "a" == type:
+                data['title'] = "补发考核奖发放"
+                data['text'] = "年度考核奖:" + str(a.salary)
+            elif "p" == type:
+                data['title'] = "养老保险临时补贴"
+                data['text'] = "养老保险临时补贴:" + str(p.salary)
+            elif "b" == type:
+                data['title'] = "基层补贴"
+                data['text'] = "基层补贴:" + str(b.salary)
             else:
                 return HttpResponse(json.dumps({"status": "fail", "msg": "查询错误!"}), content_type="application/json")
 
@@ -502,53 +538,107 @@ class DataUpdateView(View):
         return render(request, 'add_data.html', {})
 
     def post(self, request):
-        self.trafficFile(request)
-        self.basicFile(request)
-        self.salaryFile(request)
-        self.festivalFile(request)
+        # 家属统筹医疗费发放
+        self.medicalFile(request)
+        # 未休年休假工资报酬发放
+        self.vacationFile(request)
+        # 独生子女费
         self.onlyFile(request)
-        self.familyFile(request)
-        self.temporaryFile(request)
-        self.otherFile(request)
+        # 绩效考核奖发放
+        self.performanceAppraisaFile(request)
+        # 非统发人员工资及统发人员津贴发放
+        self.nonStaffFile(request)
+        # 过节费
+        self.holidayFile(request)
+        # 基层补贴
+        self.basicFile(request)
+        # 养老保险临时补贴
+        self.oldFile(request)
+        # 补发考核奖
+        self.performanceAppraisaFixFile(request)
+
         return HttpResponse(json.dumps({"status": "success", "msg": "文件读取完毕!"}), content_type="application/json")
 
-    #交通补贴
-    def trafficFile(self, request):
-        file = request.FILES.get('traffic', None)
+    # 判断是否为数字
+    def isNum(self, value):
+        try:
+            int(value)
+            return True
+        except Exception as e:
+            return False
+
+    # 家属统筹医疗费发放
+    def medicalFile(self, request):
+        # 保存文件
+        file = request.FILES.get('medical', None)
         if file:
             fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
             for chunk in file.chunks():
                 fd.write(chunk)
             fd.close()
 
-    #基层补贴
-    def basicFile(self, request):
-        file = request.FILES.get('basic', None)
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if self.isNum(table.cell_value(i, 0)):
+                        medical = Medical()
+                        medical.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        medical.date = datetime.datetime.strptime(date, "%Y-%m")
+                        medical.salary = table.cell_value(i, 2)
+                        medical.save()
+            except Exception as e:
+                print e
+
+    # 未休年休假工资报酬发放
+    def vacationFile(self, request):
+        # 保存文件
+        file = request.FILES.get('vacation', None)
         if file:
             fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
             for chunk in file.chunks():
                 fd.write(chunk)
             fd.close()
 
-    #补发工资
-    def salaryFile(self, request):
-        file = request.FILES.get('salary', None)
-        if file:
-            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
-            for chunk in file.chunks():
-                fd.write(chunk)
-            fd.close()
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
 
-    #过节费
-    def festivalFile(self, request):
-        file = request.FILES.get('festival', None)
-        if file:
-            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
-            for chunk in file.chunks():
-                fd.write(chunk)
-            fd.close()
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
 
-    #独生子女费
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if self.isNum(table.cell_value(i, 0)):
+                        tackholiday = TackHoliday()
+                        # 姓名
+                        tackholiday.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        tackholiday.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 金额
+                        tackholiday.salary = table.cell_value(i, 6)
+                        tackholiday.save()
+
+            except Exception as e:
+                print e
+
+    # 独生子女费
     def onlyFile(self, request):
         file = request.FILES.get('only', None)
         if file:
@@ -557,29 +647,289 @@ class DataUpdateView(View):
                 fd.write(chunk)
             fd.close()
 
-    #计生奖
-    def familyFile(self, request):
-        file = request.FILES.get('family', None)
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if self.isNum(table.cell_value(i, 0)):
+                        singlechild = SingleChild()
+                        # 姓名
+                        singlechild.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        singlechild.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 金额
+                        singlechild.salary = table.cell_value(i, 7)
+                        singlechild.save()
+
+            except Exception as e:
+                print e
+
+    # 绩效考核奖发放
+    def performanceAppraisaFile(self, request):
+        # 保存文件
+        file = request.FILES.get('performanceAppraisa', None)
         if file:
             fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
             for chunk in file.chunks():
                 fd.write(chunk)
             fd.close()
 
-    #临时补贴
-    def temporaryFile(self, request):
-        file = request.FILES.get('temporary', None)
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if self.isNum(table.cell_value(i, 0)):
+                        performanceAppraisa = PerformanceAppraisa()
+                        # 姓名
+                        performanceAppraisa.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        performanceAppraisa.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 2.5倍考核奖
+                        performanceAppraisa.award = table.cell_value(i, 6)
+                        # 所得税
+                        performanceAppraisa.tax = table.cell_value(i, 9)
+                        # 实发合计
+                        performanceAppraisa.salary = table.cell_value(i, 10)
+                        performanceAppraisa.save()
+            except Exception as e:
+                print e
+
+    # 非统发人员工资及统发人员津贴发放
+    def nonStaffFile(self, request):
+        # 保存文件
+        file = request.FILES.get('nonStaff', None)
         if file:
             fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
             for chunk in file.chunks():
                 fd.write(chunk)
             fd.close()
 
-    #其他项目
-    def otherFile(self, request):
-        file = request.FILES.get('other', None)
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                isName = False
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if isName:
+                        nonstaff = NonStaff()
+                        # 姓名
+                        nonstaff.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        nonstaff.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 年金
+                        nonstaff.salary = table.cell_value(i, 38)
+                        # 个人统筹医疗
+                        nonstaff.medical = table.cell_value(i, 39)
+                        # 养老补差
+                        nonstaff.old = table.cell_value(i, 40)
+                        # 住房公积金（个人）
+                        nonstaff.house_p = table.cell_value(i, 41)
+                        # 住房公积金（单位）
+                        nonstaff.house_o = table.cell_value(i, 42)
+                        # 房改住房补贴
+                        nonstaff.house_fix = table.cell_value(i, 43)
+                        nonstaff.save()
+
+                    if table.cell_value(i, 0) == "姓名":
+                        isName = True
+
+            except Exception as e:
+                print e
+
+    # 过节费
+    def holidayFile(self, request):
+        file = request.FILES.get('holiday', None)
         if file:
             fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
             for chunk in file.chunks():
                 fd.write(chunk)
             fd.close()
+
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                isName = False
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if isName:
+                        holiday = Holiday()
+                        # 具体节日
+                        holiday.holiday = table.cell_value(0, 0)[13:-1]
+                        # 姓名
+                        holiday.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        holiday.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 金额
+                        holiday.salary = table.cell_value(i, 18)
+                        holiday.save()
+
+                    if table.cell_value(i, 0) == "姓名":
+                        isName = True
+
+            except Exception as e:
+                print e
+
+    # 基层补贴
+    def basicFile(self, request):
+        file = request.FILES.get('basic', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                isName = False
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if isName:
+                        basic = Basic()
+                        # 姓名
+                        basic.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        basic.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 金额
+                        basic.salary = table.cell_value(i, 18)
+                        basic.save()
+
+                    if table.cell_value(i, 0) == "姓名":
+                        isName = True
+
+            except Exception as e:
+                print e
+
+    # 养老保险临时补贴
+    def oldFile(self, request):
+        file = request.FILES.get('old', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                isName = False
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if isName:
+                        provide = Provide()
+                        # 补贴名称
+                        #print table.cell_value(0, 0)[13:-1]
+                        # 姓名
+                        provide.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        provide.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 金额
+                        provide.salary = table.cell_value(i, 18)
+                        provide.save()
+
+                    if table.cell_value(i, 0) == "姓名":
+                        isName = True
+
+            except Exception as e:
+                print e
+
+    # 补发考核奖
+    def performanceAppraisaFixFile(self, request):
+        file = request.FILES.get('performanceAppraisaFix', None)
+        if file:
+            fd = open(os.path.join(FILE_ROOT, file.name), 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+
+            try:
+                # 使用 xlrd 打开 excel 文件
+                excelFiile = xlrd.open_workbook(os.path.join(FILE_ROOT, file.name))
+
+                # 选择第一个 sheet
+                table = excelFiile.sheets()[0]
+
+                # 日期
+                date = request.POST.get('date', None)
+                if date == '':
+                    date = datetime.datetime.now().strftime("%Y-%m")
+
+                isName = False
+
+                # 根据 table 的行数循环
+                for i in range(table.nrows):
+
+                    if isName:
+                        assess = Assess()
+                        # 姓名
+                        assess.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        assess.date = datetime.datetime.strptime(date, "%Y-%m")
+                        # 金额
+                        assess.salary = table.cell_value(i, 18)
+                        assess.save()
+
+                    if table.cell_value(i, 0) == "姓名":
+                        isName = True
+
+            except Exception as e:
+                print e

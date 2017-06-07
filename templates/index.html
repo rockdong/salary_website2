@@ -156,11 +156,6 @@
                                 <span>修改密码</span>
                             </a>
                         </li>
-                        <li>
-                            <a name="add_data" href="{% url 'add_data' %}">
-                                <span>更新数据</span>
-                            </a>
-                        </li>
                         {% if request.user.is_superuser %}
                             <li>
                                 <a href="" class="auto" href="#">
@@ -168,7 +163,6 @@
                     <i class="fa fa-fw fa-angle-right text"></i>
                       <i class="fa fa-fw fa-angle-down text-active"></i>
                   </span>
-                                    <i class="glyphicon glyphicon-edit"></i>
                                     <span>信息添加</span>
                                 </a>
                                 <ul class="nav nav-sub dk">
@@ -183,8 +177,13 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a name="data_add" href="{% url 'data_add' %}">
-                                            <span>添加数据</span>
+                                        <a name="user_add" href="{% url 'user_list' %}">
+                                            <span>人员查看</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a name="add_data" href="{% url 'add_data' %}">
+                                            <span>更新数据</span>
                                         </a>
                                     </li>
                                 </ul>
