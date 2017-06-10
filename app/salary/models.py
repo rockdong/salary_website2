@@ -8,143 +8,6 @@ from user_profile.models import UserProfile
 
 # Create your models here.
 
-
-# class Salary(models.Model):
-#     user = models.ForeignKey(UserProfile, verbose_name='用户')
-#     date = models.DateField(verbose_name='时间')
-#     realy_salary = models.FloatField(verbose_name='应发工资')
-#     realy_discount = models.FloatField(verbose_name='应扣金额')
-#     replacement_amount = models.FloatField(verbose_name='补发金额')
-#
-#     class Meta:
-#         verbose_name = '工资'
-#         verbose_name_plural = verbose_name
-#
-#     def __unicode__(self):
-#         return self.user.name + "|" + self.date + "|" + self.realy_salary
-#
-#
-# class DetailSalary(models.Model):
-#     user = models.ForeignKey(UserProfile, verbose_name='用户')
-#     content = models.CharField(max_length=100, verbose_name='内容')
-#     realy_salary = models.FloatField(verbose_name='应发工资')
-#     realy_discount = models.FloatField(verbose_name='应扣金额')
-#     replacement_amount = models.FloatField(verbose_name='补发金额')
-#
-#     class Meta:
-#         verbose_name = '工资明细'
-#         verbose_name_plural = verbose_name
-#
-#     def __unicode__(self):
-#         return self.user.name + "|" + self.user.date + "|" + self.content
-#
-#
-# class DetailPart(models.Model):
-#     detail_salary = models.ForeignKey(DetailSalary, verbose_name='工资明细')
-#     standard = models.FloatField(verbose_name='标准')
-#     tax = models.FloatField(verbose_name='所得税')
-#     really_salary = models.FloatField(verbose_name='实发合计')
-#
-#     class Meta:
-#         verbose_name = '工资详情'
-#         verbose_name_plural = verbose_name
-#
-#     def __unicode__(self):
-#         return self.detail_salary.user.name + "|"
-
-
-'''
-预发年终绩效奖励
-'''
-class PreYearEndPerformanceAppraisa(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
-    date = models.DateField(verbose_name='日期')
-    title = models.CharField(default='预发年终绩效工资', max_length=100)
-    standard = models.FloatField(default=0.0, verbose_name='标准')
-    amount = models.FloatField(default=0.0, verbose_name='金额')
-    index = models.FloatField(default=0.0, verbose_name='数量')
-    tax = models.FloatField(default=0.0, verbose_name='所得税')
-    other = models.FloatField(default=0.0, verbose_name='其它补贴')
-
-
-'''
-政府绩效考核奖
-'''
-class GovPerformanceAppraisa(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
-    date = models.DateField(verbose_name='日期')
-    title = models.CharField(default='政府绩效考核奖', max_length=100)
-    standard = models.FloatField(default=0.0, verbose_name='标准')
-    amount = models.FloatField(default=0.0, verbose_name='金额')
-    ratio = models.FloatField(default=0.0, verbose_name='系数')
-    tax = models.FloatField(default=0.0, verbose_name='所得税')
-    other = models.FloatField(default=0.0, verbose_name='扣除其它')
-
-
-'''
-特别效益奖励
-'''
-class SpecialBenefitAward(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
-    date = models.DateField(verbose_name='日期')
-    title = models.CharField(default='特别效益奖励性绩效', max_length=100)
-    standard = models.FloatField(default=0.0, verbose_name='标准')
-    index = models.FloatField(default=0.0, verbose_name='数量')
-    amount = models.FloatField(default=0.0, verbose_name='金额')
-    tax = models.FloatField(default=0.0, verbose_name='所得税')
-    other = models.FloatField(default=0.0, verbose_name='其它补贴')
-
-
-'''
-干部职务奖励性绩效
-'''
-class CadreDutyAward(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
-    date = models.DateField(verbose_name='日期')
-    title = models.CharField(default='干部职务奖励性绩效', max_length=100)
-    standard = models.FloatField(default=0.0, verbose_name='标准')
-    subsidy = models.FloatField(default=0.0, verbose_name='补贴')
-    index = models.FloatField(default=0.0, verbose_name='数量')
-    tax = models.FloatField(default=0.0, verbose_name='所得税')
-    other = models.FloatField(default=0.0, verbose_name='其它补贴')
-
-
-'''
-正式工资
-'''
-class ReallySalary(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
-    date = models.DateField(verbose_name='日期')
-    title = models.CharField(default='编内正式工工资', max_length=100)
-    post_wage = models.FloatField(default=0.0, verbose_name='岗位工资')
-    level_wage = models.FloatField(default=0.0, verbose_name='薪级工资')
-    area_allowance = models.FloatField(default=0.0, verbose_name='特区津贴')
-    base_allowance = models.FloatField(default=0.0, verbose_name='基础津贴')
-    special_post_allowance = models.FloatField(default=0.0, verbose_name='特殊岗位津贴')
-    shortage_post = models.FloatField(default=0.0, verbose_name='紧缺岗位')
-    nursing_age = models.IntegerField(default=0, verbose_name='护龄')
-    urance_benefit = models.FloatField(default=0.0, verbose_name='保险金')
-    housing_fund = models.FloatField(default=0.0, verbose_name='住房公积金')
-    housing_fund2 = models.FloatField(default=0.0, verbose_name='住房公积金2')
-    tax = models.FloatField(default=0.0, verbose_name='所得税')
-    rent = models.FloatField(default=0.0, verbose_name='房租')
-    utilities = models.FloatField(default=0.0, verbose_name='水电')
-    other = models.FloatField(default=0.0, verbose_name='其它')
-
-'''
-伙食
-'''
-class Food(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
-    title = models.CharField(default='院陪伙食补', max_length=100)
-    date = models.DateField(verbose_name='日期')
-    standard = models.FloatField(default=0.0, verbose_name='标准')
-    amount = models.FloatField(default=0.0, verbose_name='金额')
-    index = models.IntegerField(default=1, verbose_name='数量')
-    tax = models.FloatField(default=0.0, verbose_name='所得税')
-
-#----------------------------------------
-
 '''
 统筹医疗发放
 '''
@@ -153,6 +16,9 @@ class Medical(models.Model):
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='应发金额')
 
+    def toString(self):
+        return "<div class=\"form-group\"><span>应发金额 : </span><span>" + str(self.salary) + "</span></div>"
+
 '''
 未休年休假工资报酬发放
 '''
@@ -160,6 +26,9 @@ class TackHoliday(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='应支付未休年休假工资报酬')
+
+    def toString(self):
+        return "<div class=\"form-group\"><span>应支付未休年休假工资报酬 : </span><span>" + str(self.salary) + "</span></div>"
 
 '''
 节日补贴
@@ -170,6 +39,9 @@ class Holiday(models.Model):
     holiday = models.CharField(max_length=20, verbose_name='节日')
     salary = models.FloatField(default=0.0, verbose_name='节日补贴')
 
+    def toString(self):
+        return "<div class=\"form-group\"><span>" + self.holiday + " : </span><span>" + str(self.salary) + "</span></div>"
+
 '''
 独生子女优待费发放
 '''
@@ -177,6 +49,9 @@ class SingleChild(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='应发金额')
+
+    def toString(self):
+        return "<div class=\"form-group\"><span>应发金额 : </span><span>" + str(self.salary) + "</span></div>"
 
 '''
 绩效考核奖发放
@@ -187,6 +62,11 @@ class PerformanceAppraisa(models.Model):
     tax = models.FloatField(default=0.0, verbose_name='所得税')
     award = models.FloatField(default=0.0, verbose_name='2.5倍考核奖')
     salary = models.FloatField(default=0.0, verbose_name='实发合计')
+
+    def toString(self):
+        return "<div class=\"form-group\"><span>2.5倍考核奖 : </span><span>" + str(self.award) + "</span></div>" + \
+               "<div class=\"form-group\"><span>所得税 : </span><span>" + str(self.tax) + "</span></div>" + \
+               "<div class=\"form-group\"><span>实发合计 : </span><span>" + str(self.salary) + "</span></div>"
 
 '''
 非统发人员工资及统发人员津贴发放
@@ -201,6 +81,14 @@ class NonStaff(models.Model):
     house_o = models.FloatField(default=0.0, verbose_name='住房公积金（单位）')
     house_fix = models.FloatField(default=0.0, verbose_name='房改住房补贴')
 
+    def toString(self):
+        return "<div class=\"form-group\"><span>年金 : </span><span>" + str(self.salary) + "</span></div>" + \
+               "<div class=\"form-group\"><span>个人统筹医疗 : </span><span>" + str(self.medical) + "</span></div>" + \
+               "<div class=\"form-group\"><span>养老补差 : </span><span>" + str(self.old) + "</span></div>" + \
+               "<div class=\"form-group\"><span>住房公积金（个人） : </span><span>" + str(self.house_p) + "</span></div>" + \
+               "<div class=\"form-group\"><span>住房公积金（单位） : </span><span>" + str(self.house_o) + "</span></div>" + \
+               "<div class=\"form-group\"><span>房改住房补贴 : </span><span>" + str(self.house_fix) + "</span></div>"
+
 '''
 补发考核奖发放
 '''
@@ -208,6 +96,9 @@ class Assess(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='年度考核奖')
+
+    def toString(self):
+        return "<div class=\"form-group\"><span>年度考核奖 : </span><span>" + str(self.salary) + "</span></div>"
 
 '''
 养老保险临时补贴
@@ -217,6 +108,9 @@ class Provide(models.Model):
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='养老保险临时补贴')
 
+    def toString(self):
+        return "<div class=\"form-group\"><span>养老保险临时补贴 : </span><span>" + str(self.salary) + "</span></div>"
+
 '''
 基层补贴
 '''
@@ -224,3 +118,58 @@ class Basic(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='基层补贴')
+
+    def toString(self):
+        return "<div class=\"form-group\"><span>基层补贴 : </span><span>" + str(self.salary) + "</span></div>"
+
+'''
+财政统发工资系统总表
+'''
+class Total(models.Model):
+    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    date = models.DateField(verbose_name='日期')
+    salary_card = models.IntegerField(verbose_name='工资卡号')
+    salary_job = models.FloatField(default=0.0, verbose_name='职务工资')
+    salary_lv = models.FloatField(default=0.0, verbose_name='级别工资')
+    salary_sp = models.FloatField(default=0.0, verbose_name='特区津贴')
+    salary_bc = models.FloatField(default=0.0, verbose_name='基础津贴')
+    salary_year_p = models.FloatField(default=0.0, verbose_name='职业年金个人')
+    salary_year_o = models.FloatField(default=0.0, verbose_name='职业年金单位')
+    salary_year = models.FloatField(default=0.0, verbose_name='年金')
+    salary_assess = models.FloatField(default=0.0, verbose_name='奖励性绩效工资')
+    salary_t = models.FloatField(default=0.0, verbose_name='应发工资')
+    sp_salary = models.FloatField(default=0.0, verbose_name='个人缴纳社保费-个人合计')
+    sp_medical = models.FloatField(default=0.0, verbose_name='个人缴纳社保费-个人医疗')
+    sp_old = models.FloatField(default=0.0, verbose_name='个人缴纳社保费-个人养老')
+    sp_medical_count = models.FloatField(default=0.0, verbose_name='个人缴纳社保费-个人统筹医疗')
+    tax = models.FloatField(default=0.0, verbose_name='所得税')
+    accumulation_p = models.FloatField(default=0.0, verbose_name='个人公积金')
+    accumulation_o = models.FloatField(default=0.0, verbose_name='单位公积金')
+    salary_r = models.FloatField(default=0.0, verbose_name='实发工资')
+    house_fix = models.FloatField(default=0.0, verbose_name='房改补贴')
+    so_salary = models.FloatField(default=0.0, verbose_name='单位缴纳社保费-单位社保合计')
+    so_medical = models.FloatField(default=0.0, verbose_name='单位缴纳社保费-单位医疗')
+    so_old = models.FloatField(default=0.0, verbose_name='单位缴纳社保费-单位养老')
+
+    def toString(self):
+        return "<div><span>职务工资 : </span><span>" + str(self.salary_job) + "</span></div>" + \
+               "<div><span>级别工资 : </span><span>" + str(self.salary_lv) + "</span></div>" + \
+               "<div><span>特区津贴 : </span><span>" + str(self.salary_sp) + "</span></div>" + \
+               "<div><span>基础津贴 : </span><span>" + str(self.salary_bc) + "</span></div>" + \
+               "<div><span>职业年金个人 : </span><span>" + str(self.salary_year_p) + "</span></div>" + \
+               "<div><span>职业年金单位 : </span><span>" + str(self.salary_year_o) + "</span></div>" + \
+               "<div><span>年金 : </span><span>" + str(self.salary_year) + "</span></div>" + \
+               "<div><span>奖励性绩效工资 : </span><span>" + str(self.salary_assess) + "</span></div>" + \
+               "<div><span>个人缴纳社保费-个人合计 : </span><span>" + str(self.sp_salary) + "</span></div>" + \
+               "<div><span>个人缴纳社保费-个人医疗 : </span><span>" + str(self.sp_medical) + "</span></div>" + \
+               "<div><span>个人缴纳社保费-个人养老 : </span><span>" + str(self.sp_old) + "</span></div>" + \
+               "<div><span>个人缴纳社保费-个人统筹医疗 : </span><span>" + str(self.sp_medical_count) + "</span></div>" + \
+               "<div><span>所得税 : </span><span>" + str(self.tax) + "</span></div>" + \
+               "<div><span>个人公积金 : </span><span>" + str(self.accumulation_p) + "</span></div>" + \
+               "<div><span>单位公积金 : </span><span>" + str(self.accumulation_o) + "</span></div>" + \
+               "<div><span>房改补贴 : </span><span>" + str(self.house_fix) + "</span></div>" + \
+               "<div><span>单位缴纳社保费-单位社保合计 : </span><span>" + str(self.so_salary) + "</span></div>" + \
+               "<div><span>单位缴纳社保费-单位医疗 : </span><span>" + str(self.so_medical) + "</span></div>" + \
+               "<div><span>单位缴纳社保费-单位养老 : </span><span>" + str(self.so_old) + "</span></div>" + \
+               "<div><span>应发工资 : </span><span>" + str(self.salary_t) + "</span></div>" + \
+               "<div><span>实发工资 : </span><span>" + str(self.salary_r) + "</span></div>"

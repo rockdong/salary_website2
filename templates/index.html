@@ -152,7 +152,7 @@
                             </a>
                         </li>
                         <li>
-                            <a name="set_password" href="{% url 'set_password' %}">
+                            <a name="set_password" href="{% url 'set_password' request.user.id %}">
                                 <span>修改密码</span>
                             </a>
                         </li>

@@ -18,6 +18,6 @@ urlpatterns = [
     url(r'^salary_detail/(?P<start_date>.*)/(?P<cur_date>.*)/(?P<end_date>.*)/', SalaryDetailView.as_view(), name='salary_detail'),
     url(r'^salary_detail_info/', SalaryDetailInfoView.as_view(), name='salary_detail_info'),
     url(r'^salary_collect/', SalaryCollectView.as_view(), name='salary_collect'),
-    url(r'^set_password/', SetPasswordView.as_view(), name='set_password'),
+    url(r'^set_password/(?P<id>.*)/', SetPasswordView.as_view(), name='set_password'),
     url(r'^add_data/', DataUpdateView.as_view(), name='add_data'),
 ]

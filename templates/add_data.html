@@ -28,6 +28,12 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-id-1">财政统发工资系统总表:</label>
+                        <div class="col-sm-10">
+                            <input name="total" type="file" class="form-control form-control-file">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-id-1">家属统筹医疗费发放:</label>
                         <div class="col-sm-10">
                             <input name="medical" type="file" class="form-control form-control-file">
@@ -113,9 +119,18 @@
             var data = new FormData($("#data_add_form").get(0));
 
             var inputs = new Array();
+            if(data.get("total").name != "") {
+                var filename = data.get("total").name;
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
+                        filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
+                    sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
+                    return ;
+                }
+                inputs[inputs.length] = filename;
+            }
             if(data.get("medical").name != "") {
                 var filename = data.get("medical").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -124,7 +139,7 @@
             }
             if(data.get("vacation").name != "") {
                 var filename = data.get("vacation").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -133,7 +148,7 @@
             }
             if(data.get("only").name != "") {
                 var filename = data.get("only").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -142,7 +157,7 @@
             }
             if(data.get("performanceAppraisa").name != "") {
                 var filename = data.get("performanceAppraisa").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -151,7 +166,7 @@
             }
             if(data.get("nonStaff").name != "") {
                 var filename = data.get("nonStaff").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -160,7 +175,7 @@
             }
             if(data.get("holiday").name != "") {
                 var filename = data.get("holiday").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -169,7 +184,7 @@
             }
             if(data.get("basic").name != "") {
                 var filename = data.get("basic").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -178,7 +193,7 @@
             }
             if(data.get("old").name != "") {
                 var filename = data.get("old").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;
@@ -187,7 +202,7 @@
             }
             if(data.get("performanceAppraisaFix").name != "") {
                 var filename = data.get("performanceAppraisaFix").name;
-                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlx" &&
+                if(filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xls" &&
                         filename.substr(filename.lastIndexOf(".")).toLowerCase() != ".xlsx") {
                     sweetAlert("文件格式错误", "文件名:'" + filename +"'不是指定的 Excel 文件", "error");
                     return ;

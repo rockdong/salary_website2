@@ -1,6 +1,0 @@
-DROP TABLE IF EXISTS [salary_specialbenefitaward];
-CREATE TABLE [salary_specialbenefitaward]([rowid] integer, [id] integer, [date] date, [standard] real, [index] real, [other] real, [user_id] integer, [amount] real, [tax] real);
-
-INSERT INTO [salary_specialbenefitaward]([rowid], [id], [date], [standard], [index], [other], [user_id], [amount], [tax])
-VALUES(1, 1, '2017-04-30', 500, 1, 0, 4, 500, 0);
-

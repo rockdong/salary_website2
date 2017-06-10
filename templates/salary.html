@@ -52,18 +52,20 @@
                                 </thead>
                                 <tbody>
                                 {% for data in datas reversed %}
-                                    <tr>
-                                        <td class="text-center">{{ data.date | date:'Y-m' }}</td>
-                                        <td class="text-center">{{ data.salary }}</td>
-                                        <td class="text-center">{{ data.discount }}</td>
-                                        <td class="text-center">{{ data.really_salary }}</td>
-                                        <td class="text-center">
-                                            {% ifnotequal data.salary "无数据" %}
-                                                <a href="/index/salary_detail/{{ start_date | date:'Y-m' }}/{{ data.date | date:'Y-m' }}/{{ end_date | date:'Y-m' }}/" class="btn btn-info btn-xs">查看</a>
-                                            {% endifnotequal %}
+                                    {% ifnotequal data None %}
+                                        <tr>
+                                            <td class="text-center">{{ data.date | date:'Y-m' }}</td>
+                                            <td class="text-center">{{ data.salary }}</td>
+                                            <td class="text-center">{{ data.discount }}</td>
+                                            <td class="text-center">{{ data.really_salary }}</td>
+                                            <td class="text-center">
+                                                {% ifnotequal data.salary "无数据" %}
+                                                    <a href="/index/salary_detail/{{ start_date | date:'Y-m' }}/{{ data.date | date:'Y-m' }}/{{ end_date | date:'Y-m' }}/" class="btn btn-info btn-xs">查看</a>
+                                                {% endifnotequal %}
 
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    {% endifnotequal %}
                                 {% endfor %}
                                 </tbody>
                             </table>
