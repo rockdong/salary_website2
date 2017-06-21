@@ -632,13 +632,20 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                totals = Total.objects.filter(date__year=tdate.year, date__month=tdate.month)
+                totals.delete()
+
+
                 # 根据 table 的行数循环
                 for i in range(table.nrows):
 
                     if self.isNum(table.cell_value(i, 0)):
                         total = Total()
                         total.user = UserProfile.objects.get(name=table.cell_value(i, 1))
-                        total.date = datetime.datetime.strptime(date, "%Y-%m")
+                        total.date = tdate
                         total.salary_card = int(table.cell_value(i, 4))
                         total.salary_job = float(table.cell_value(i, 7))
                         total.salary_lv = float(table.cell_value(i, 9))
@@ -688,13 +695,19 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                medicals = Medical.objects.filter(date__year=tdate.year, date__month=tdate.month)
+                medicals.delete()
+
                 # 根据 table 的行数循环
                 for i in range(table.nrows):
 
                     if self.isNum(table.cell_value(i, 0)):
                         medical = Medical()
                         medical.user = UserProfile.objects.get(name=table.cell_value(i, 1))
-                        medical.date = datetime.datetime.strptime(date, "%Y-%m")
+                        medical.date = tdate
                         medical.salary = table.cell_value(i, 2)
                         medical.save()
         except Exception as e:
@@ -723,6 +736,12 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                tackholidays = TackHoliday.objects.filter(date__year=tdate.year, date__month=tdate.month)
+                tackholidays.delete()
+
                 # 根据 table 的行数循环
                 for i in range(table.nrows):
 
@@ -730,7 +749,7 @@ class DataUpdateView(View):
                         tackholiday = TackHoliday()
                         # 姓名
                         tackholiday.user = UserProfile.objects.get(name=table.cell_value(i, 1))
-                        tackholiday.date = datetime.datetime.strptime(date, "%Y-%m")
+                        tackholiday.date = tdate
                         # 金额
                         tackholiday.salary = table.cell_value(i, 6)
                         tackholiday.save()
@@ -759,6 +778,12 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                singlechilds = SingleChild.objects.filter(date__year=tdate.year, date__month=tdate.month)
+                singlechilds.delete()
+
                 # 根据 table 的行数循环
                 for i in range(table.nrows):
 
@@ -766,7 +791,7 @@ class DataUpdateView(View):
                         singlechild = SingleChild()
                         # 姓名
                         singlechild.user = UserProfile.objects.get(name=table.cell_value(i, 1))
-                        singlechild.date = datetime.datetime.strptime(date, "%Y-%m")
+                        singlechild.date = tdate
                         # 金额
                         singlechild.salary = table.cell_value(i, 7)
                         singlechild.save()
@@ -796,6 +821,12 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                performanceAppraisas = PerformanceAppraisa.objects.filter(date__year=tdate.year, date__month=tdate.month)
+                performanceAppraisas.delete()
+
                 # 根据 table 的行数循环
                 for i in range(table.nrows):
 
@@ -803,7 +834,7 @@ class DataUpdateView(View):
                         performanceAppraisa = PerformanceAppraisa()
                         # 姓名
                         performanceAppraisa.user = UserProfile.objects.get(name=table.cell_value(i, 1))
-                        performanceAppraisa.date = datetime.datetime.strptime(date, "%Y-%m")
+                        performanceAppraisa.date = tdate
                         # 2.5倍考核奖
                         performanceAppraisa.award = table.cell_value(i, 6)
                         # 所得税
@@ -836,6 +867,13 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                nonstaffs = NonStaff.objects.filter(date__year=tdate.year,
+                                                                          date__month=tdate.month)
+                nonstaffs.delete()
+
                 isName = False
 
                 # 根据 table 的行数循环
@@ -845,7 +883,7 @@ class DataUpdateView(View):
                         nonstaff = NonStaff()
                         # 姓名
                         nonstaff.user = UserProfile.objects.get(name=table.cell_value(i, 0))
-                        nonstaff.date = datetime.datetime.strptime(date, "%Y-%m")
+                        nonstaff.date = tdate
                         # 年金
                         nonstaff.salary = table.cell_value(i, 38)
                         # 个人统筹医疗
@@ -887,6 +925,13 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                holidays = Holiday.objects.filter(date__year=tdate.year,
+                                                    date__month=tdate.month)
+                holidays.delete()
+
                 isName = False
 
                 # 根据 table 的行数循环
@@ -898,7 +943,7 @@ class DataUpdateView(View):
                         holiday.holiday = table.cell_value(0, 0)[13:-1]
                         # 姓名
                         holiday.user = UserProfile.objects.get(name=table.cell_value(i, 0))
-                        holiday.date = datetime.datetime.strptime(date, "%Y-%m")
+                        holiday.date = tdate
                         # 金额
                         holiday.salary = table.cell_value(i, 18)
                         holiday.save()
@@ -930,6 +975,13 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                basics = Basic.objects.filter(date__year=tdate.year,
+                                                  date__month=tdate.month)
+                basics.delete()
+
                 isName = False
 
                 # 根据 table 的行数循环
@@ -939,7 +991,7 @@ class DataUpdateView(View):
                         basic = Basic()
                         # 姓名
                         basic.user = UserProfile.objects.get(name=table.cell_value(i, 0))
-                        basic.date = datetime.datetime.strptime(date, "%Y-%m")
+                        basic.date = tdate
                         # 金额
                         basic.salary = table.cell_value(i, 18)
                         basic.save()
@@ -971,6 +1023,13 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                provides = Provide.objects.filter(date__year=tdate.year,
+                                              date__month=tdate.month)
+                provides.delete()
+
                 isName = False
 
                 # 根据 table 的行数循环
@@ -982,7 +1041,7 @@ class DataUpdateView(View):
                         #print table.cell_value(0, 0)[13:-1]
                         # 姓名
                         provide.user = UserProfile.objects.get(name=table.cell_value(i, 0))
-                        provide.date = datetime.datetime.strptime(date, "%Y-%m")
+                        provide.date = tdate
                         # 金额
                         provide.salary = table.cell_value(i, 18)
                         provide.save()
@@ -1014,6 +1073,13 @@ class DataUpdateView(View):
                 if date == '':
                     date = datetime.datetime.now().strftime("%Y-%m")
 
+                tdate = datetime.datetime.strptime(date, "%Y-%m")
+
+                # 删除数据
+                assesss = Assess.objects.filter(date__year=tdate.year,
+                                                  date__month=tdate.month)
+                assesss.delete()
+
                 isName = False
 
                 # 根据 table 的行数循环
@@ -1023,7 +1089,7 @@ class DataUpdateView(View):
                         assess = Assess()
                         # 姓名
                         assess.user = UserProfile.objects.get(name=table.cell_value(i, 0))
-                        assess.date = datetime.datetime.strptime(date, "%Y-%m")
+                        assess.date = tdate
                         # 金额
                         assess.salary = table.cell_value(i, 18)
                         assess.save()
