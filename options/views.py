@@ -440,7 +440,7 @@ class SalaryDetailView(View):
 class SalaryDetailInfoView(View):
     def post(self, request):
         try:
-            cur_user = request.user
+            cur_user = request.user.name
             type = request.POST.get('type', None)
             cur_date = datetime.datetime.strptime(request.POST.get('date', None), '%Y-%m')
             t, m, th, h, sc, pa, ns, a, p, b = getSalary(cur_user, cur_date)
@@ -640,35 +640,67 @@ class DataUpdateView(View):
 
 
                 # 根据 table 的行数循环
-                for i in range(table.nrows):
+                print table.ncols
+                if table.ncols == 58:
+                    for i in range(table.nrows):
 
-                    if self.isNum(table.cell_value(i, 0)):
-                        total = Total()
-                        total.user = UserProfile.objects.get(name=table.cell_value(i, 1))
-                        total.date = tdate
-                        total.salary_card = int(table.cell_value(i, 4))
-                        total.salary_job = float(table.cell_value(i, 7))
-                        total.salary_lv = float(table.cell_value(i, 9))
-                        total.salary_sp = float(table.cell_value(i, 15))
-                        total.salary_bc = float(table.cell_value(i, 27))
-                        total.salary_year_p = float(table.cell_value(i, 33))
-                        total.salary_year_o = float(table.cell_value(i, 34))
-                        total.salary_year = float(table.cell_value(i, 35))
-                        total.salary_assess = float(table.cell_value(i, 36))
-                        total.salary_t = float(table.cell_value(i, 40))
-                        total.sp_salary = float(table.cell_value(i, 42))
-                        total.sp_medical = float(table.cell_value(i, 43))
-                        total.sp_old = float(table.cell_value(i, 44))
-                        total.sp_medical_count = float(table.cell_value(i, 45))
-                        total.tax = float(table.cell_value(i, 46))
-                        total.accumulation_p = float(table.cell_value(i, 49))
-                        total.salary_r = float(table.cell_value(i, 51))
-                        total.house_fix = float(table.cell_value(i, 52))
-                        total.accumulation_o = float(table.cell_value(i, 53))
-                        total.so_salary = float(table.cell_value(i, 55))
-                        total.so_medical = float(table.cell_value(i, 56))
-                        total.so_old = float(table.cell_value(i, 57))
-                        total.save()
+                        if self.isNum(table.cell_value(i, 0)):
+                            total = Total()
+                            total.user = table.cell_value(i, 1)
+                            total.date = tdate
+                            total.salary_card = int(table.cell_value(i, 4))
+                            total.salary_job = float(table.cell_value(i, 7))
+                            total.salary_lv = float(table.cell_value(i, 9))
+                            total.salary_sp = float(table.cell_value(i, 15))
+                            total.salary_bc = float(table.cell_value(i, 27))
+                            total.salary_year_p = float(table.cell_value(i, 33))
+                            total.salary_year_o = float(table.cell_value(i, 34))
+                            total.salary_year = float(table.cell_value(i, 35))
+                            total.salary_assess = float(table.cell_value(i, 36))
+                            total.salary_t = float(table.cell_value(i, 40))
+                            total.sp_salary = float(table.cell_value(i, 42))
+                            total.sp_medical = float(table.cell_value(i, 43))
+                            total.sp_old = float(table.cell_value(i, 44))
+                            total.sp_medical_count = float(table.cell_value(i, 45))
+                            total.tax = float(table.cell_value(i, 46))
+                            total.accumulation_p = float(table.cell_value(i, 49))
+                            total.salary_r = float(table.cell_value(i, 51))
+                            total.house_fix = float(table.cell_value(i, 52))
+                            total.accumulation_o = float(table.cell_value(i, 53))
+                            total.so_salary = float(table.cell_value(i, 55))
+                            total.so_medical = float(table.cell_value(i, 56))
+                            total.so_old = float(table.cell_value(i, 57))
+                            total.save()
+                elif table.ncols == 56:
+                    for i in range(table.nrows):
+
+                        if self.isNum(table.cell_value(i, 0)):
+                            total = Total()
+                            total.user = table.cell_value(i, 1)
+                            total.date = tdate
+                            total.salary_card = int(table.cell_value(i, 4))
+                            total.salary_job = float(table.cell_value(i, 7))
+                            total.salary_lv = float(table.cell_value(i, 9))
+                            total.salary_sp = float(table.cell_value(i, 15))
+                            total.salary_bc = float(table.cell_value(i, 27))
+                            # total.salary_year_p = float(table.cell_value(i, 33))
+                            # total.salary_year_o = float(table.cell_value(i, 34))
+                            total.salary_year = float(table.cell_value(i, 33))
+                            total.salary_assess = float(table.cell_value(i, 34))
+                            total.salary_t = float(table.cell_value(i, 38))
+                            total.sp_salary = float(table.cell_value(i, 40))
+                            total.sp_medical = float(table.cell_value(i, 41))
+                            total.sp_old = float(table.cell_value(i, 42))
+                            total.sp_medical_count = float(table.cell_value(i, 43))
+                            total.tax = float(table.cell_value(i, 44))
+                            total.accumulation_p = float(table.cell_value(i, 47))
+                            total.salary_r = float(table.cell_value(i, 49))
+                            total.house_fix = float(table.cell_value(i, 50))
+                            total.accumulation_o = float(table.cell_value(i, 51))
+                            total.so_salary = float(table.cell_value(i, 53))
+                            total.so_medical = float(table.cell_value(i, 54))
+                            total.so_old = float(table.cell_value(i, 55))
+                            total.save()
         except Exception as e:
             print e
 
@@ -706,7 +738,7 @@ class DataUpdateView(View):
 
                     if self.isNum(table.cell_value(i, 0)):
                         medical = Medical()
-                        medical.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        medical.user = table.cell_value(i, 1)
                         medical.date = tdate
                         medical.salary = table.cell_value(i, 2)
                         medical.save()
@@ -748,7 +780,7 @@ class DataUpdateView(View):
                     if self.isNum(table.cell_value(i, 0)):
                         tackholiday = TackHoliday()
                         # 姓名
-                        tackholiday.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        tackholiday.user = table.cell_value(i, 1)
                         tackholiday.date = tdate
                         # 金额
                         tackholiday.salary = table.cell_value(i, 6)
@@ -790,7 +822,7 @@ class DataUpdateView(View):
                     if self.isNum(table.cell_value(i, 0)):
                         singlechild = SingleChild()
                         # 姓名
-                        singlechild.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        singlechild.user = table.cell_value(i, 1)
                         singlechild.date = tdate
                         # 金额
                         singlechild.salary = table.cell_value(i, 7)
@@ -833,7 +865,7 @@ class DataUpdateView(View):
                     if self.isNum(table.cell_value(i, 0)):
                         performanceAppraisa = PerformanceAppraisa()
                         # 姓名
-                        performanceAppraisa.user = UserProfile.objects.get(name=table.cell_value(i, 1))
+                        performanceAppraisa.user = table.cell_value(i, 1)
                         performanceAppraisa.date = tdate
                         # 2.5倍考核奖
                         performanceAppraisa.award = table.cell_value(i, 6)
@@ -882,7 +914,7 @@ class DataUpdateView(View):
                     if isName:
                         nonstaff = NonStaff()
                         # 姓名
-                        nonstaff.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        nonstaff.user = table.cell_value(i, 0)
                         nonstaff.date = tdate
                         # 年金
                         nonstaff.salary = table.cell_value(i, 38)
@@ -942,7 +974,7 @@ class DataUpdateView(View):
                         # 具体节日
                         holiday.holiday = table.cell_value(0, 0)[13:-1]
                         # 姓名
-                        holiday.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        holiday.user = table.cell_value(i, 0)
                         holiday.date = tdate
                         # 金额
                         holiday.salary = table.cell_value(i, 18)
@@ -990,7 +1022,7 @@ class DataUpdateView(View):
                     if isName:
                         basic = Basic()
                         # 姓名
-                        basic.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        basic.user = table.cell_value(i, 0)
                         basic.date = tdate
                         # 金额
                         basic.salary = table.cell_value(i, 18)
@@ -1040,7 +1072,7 @@ class DataUpdateView(View):
                         # 补贴名称
                         #print table.cell_value(0, 0)[13:-1]
                         # 姓名
-                        provide.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        provide.user = table.cell_value(i, 0)
                         provide.date = tdate
                         # 金额
                         provide.salary = table.cell_value(i, 18)
@@ -1088,7 +1120,7 @@ class DataUpdateView(View):
                     if isName:
                         assess = Assess()
                         # 姓名
-                        assess.user = UserProfile.objects.get(name=table.cell_value(i, 0))
+                        assess.user = table.cell_value(i, 0)
                         assess.date = tdate
                         # 金额
                         assess.salary = table.cell_value(i, 18)

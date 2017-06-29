@@ -12,7 +12,7 @@ from user_profile.models import UserProfile
 统筹医疗发放
 '''
 class Medical(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='应发金额')
 
@@ -23,7 +23,7 @@ class Medical(models.Model):
 未休年休假工资报酬发放
 '''
 class TackHoliday(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='应支付未休年休假工资报酬')
 
@@ -34,7 +34,7 @@ class TackHoliday(models.Model):
 节日补贴
 '''
 class Holiday(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     holiday = models.CharField(max_length=20, verbose_name='节日')
     salary = models.FloatField(default=0.0, verbose_name='节日补贴')
@@ -46,7 +46,7 @@ class Holiday(models.Model):
 独生子女优待费发放
 '''
 class SingleChild(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='应发金额')
 
@@ -57,7 +57,7 @@ class SingleChild(models.Model):
 绩效考核奖发放
 '''
 class PerformanceAppraisa(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     tax = models.FloatField(default=0.0, verbose_name='所得税')
     award = models.FloatField(default=0.0, verbose_name='2.5倍考核奖')
@@ -72,7 +72,7 @@ class PerformanceAppraisa(models.Model):
 非统发人员工资及统发人员津贴发放
 '''
 class NonStaff(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='年金')
     medical = models.FloatField(default=0.0, verbose_name='个人统筹医疗')
@@ -93,7 +93,7 @@ class NonStaff(models.Model):
 补发考核奖发放
 '''
 class Assess(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='年度考核奖')
 
@@ -104,7 +104,7 @@ class Assess(models.Model):
 养老保险临时补贴
 '''
 class Provide(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='养老保险临时补贴')
 
@@ -115,7 +115,7 @@ class Provide(models.Model):
 基层补贴
 '''
 class Basic(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary = models.FloatField(default=0.0, verbose_name='基层补贴')
 
@@ -126,7 +126,7 @@ class Basic(models.Model):
 财政统发工资系统总表
 '''
 class Total(models.Model):
-    user = models.ForeignKey(UserProfile, verbose_name='用户')
+    user = models.CharField(max_length=20, verbose_name='用户')
     date = models.DateField(verbose_name='日期')
     salary_card = models.IntegerField(verbose_name='工资卡号')
     salary_job = models.FloatField(default=0.0, verbose_name='职务工资')
