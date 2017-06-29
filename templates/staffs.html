@@ -76,6 +76,8 @@
         });
 
         $(".btn-danger").click(function () {
+            var id = this.getAttribute("id");
+
             swal({
                 title: "你确定要删除此用户吗?",
                 text: "删除后此用户将不可使用!",
@@ -88,7 +90,6 @@
                 closeOnCancel: false
             }, function(isConfirm){
                 if (isConfirm) {
-                    var id = this.getAttribute("id");
                     $.ajax({
                         url: "/index/user_delete/"+id+"/",
                         data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
